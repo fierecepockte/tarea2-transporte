@@ -1,0 +1,12 @@
+{
+	"name": "ls_transporte",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://saucbtransporte9887212.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEVDM0VEMUZFLUUwMjEtNDk3Ri1COTA4LTU2RkQyNUE4Njk3RV9kY2Q5NGY0ZS03ZDM2LTQ1MWQtOTc4Yy05ODMyOWM3OWQ0MGMiDQp9"
+		}
+	}
+}
