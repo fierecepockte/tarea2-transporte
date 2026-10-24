@@ -1,5 +1,5 @@
 {
-	"name": "df_incidente_ruta",
+	"name": "df_bronze_incidente_ruta",
 	"properties": {
 		"folder": {
 			"name": "bronze"

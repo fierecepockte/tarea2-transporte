@@ -1,5 +1,5 @@
 {
-	"name": "df_incidentes",
+	"name": "df_bronze_incidentes",
 	"properties": {
 		"folder": {
 			"name": "bronze"
