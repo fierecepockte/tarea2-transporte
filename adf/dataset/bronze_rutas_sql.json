@@ -1,0 +1,19 @@
+{
+  "name": "bronze_rutas_sql",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "sql_erp_transporte",
+      "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "folder": {
+      "name": "bronze/sql"
+    },
+    "type": "AzureSqlTable",
+    "typeProperties": {
+      "schema": "dbo",
+      "table": "RutasAzure"
+    },
+    "schema": []
+  }
+}

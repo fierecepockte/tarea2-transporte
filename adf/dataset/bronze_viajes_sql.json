@@ -1,0 +1,19 @@
+{
+  "name": "bronze_viajes_sql",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "sql_erp_transporte",
+      "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "folder": {
+      "name": "bronze/sql"
+    },
+    "type": "AzureSqlTable",
+    "typeProperties": {
+      "schema": "dbo",
+      "table": "ViajesAzure"
+    },
+    "schema": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "bronze_incidente_ruta_dw",
+  "properties": {
+    "linkedServiceName": {
+      "referenceName": "sql_dw_transporte",
+      "type": "LinkedServiceReference"
+    },
+    "annotations": [],
+    "folder": {
+      "name": "bronze/dw"
+    },
+    "type": "AzureSqlTable",
+    "typeProperties": {
+      "schema": "bronze",
+      "table": "IncidenteRutaAzure"
+    },
+    "schema": []
+  }
+}
