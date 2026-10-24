@@ -1,0 +1,66 @@
+{
+    "properties":  {
+                       "annotations":  [
+                                           "tarea2-9887212-flujos-v2"
+                                       ],
+                       "folder":  {
+                                      "name":  "silver/automatico"
+                                  },
+                       "linkedServiceName":  {
+                                                 "referenceName":  "sql_dw_transporte",
+                                                 "type":  "LinkedServiceReference"
+                                             },
+                       "type":  "AzureSqlTable",
+                       "typeProperties":  {
+                                              "schema":  "silver",
+                                              "table":  "ParadasAzure"
+                                          },
+                       "schema":  [
+                                      {
+                                          "name":  "AnioFuente",
+                                          "type":  "smallint"
+                                      },
+                                      {
+                                          "name":  "ParadaHistoricaId",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "CodigoPublicado",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "NombreParada",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "Zona",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "Latitud",
+                                          "type":  "decimal",
+                                          "precision":  9,
+                                          "scale":  6
+                                      },
+                                      {
+                                          "name":  "Longitud",
+                                          "type":  "decimal",
+                                          "precision":  9,
+                                          "scale":  6
+                                      },
+                                      {
+                                          "name":  "VigenciaDesde",
+                                          "type":  "date"
+                                      },
+                                      {
+                                          "name":  "VigenciaHasta",
+                                          "type":  "date"
+                                      },
+                                      {
+                                          "name":  "Estado",
+                                          "type":  "nvarchar"
+                                      }
+                                  ]
+                   },
+    "name":  "silver_paradas_dw"
+}

@@ -1,0 +1,239 @@
+{
+    "properties":  {
+                       "description":  "Bronze: conserva filas y valores de CSV 2020-2021, Excel 2022/2023 y SQL 2024/2025. Homologa columnas; no elimina duplicados. Reportados y estimados se conservan en columnas propias; no se convierten en validaciones de tarjeta. El codigo de ruta del archivo se conserva en CodigoRutaOrigen.",
+                       "folder":  {
+                                      "name":  "bronze"
+                                  },
+                       "annotations":  [
+                                           "tarea2-9887212-flujos-v2"
+                                       ],
+                       "type":  "MappingDataFlow",
+                       "typeProperties":  {
+                                              "sources":  [
+                                                              {
+                                                                  "name":  "OrigenCSV",
+                                                                  "dataset":  {
+                                                                                  "referenceName":  "bronze_viajes_csv",
+                                                                                  "type":  "DatasetReference"
+                                                                              }
+                                                              },
+                                                              {
+                                                                  "name":  "OrigenExcel2022",
+                                                                  "dataset":  {
+                                                                                  "referenceName":  "bronze_viajes_2022_xls",
+                                                                                  "type":  "DatasetReference"
+                                                                              }
+                                                              },
+                                                              {
+                                                                  "name":  "OrigenExcel2023",
+                                                                  "dataset":  {
+                                                                                  "referenceName":  "bronze_viajes_2023_xls",
+                                                                                  "type":  "DatasetReference"
+                                                                              }
+                                                              },
+                                                              {
+                                                                  "name":  "OrigenSQL",
+                                                                  "dataset":  {
+                                                                                  "referenceName":  "bronze_viajes_sql",
+                                                                                  "type":  "DatasetReference"
+                                                                              }
+                                                              }
+                                                          ],
+                                              "sinks":  [
+                                                            {
+                                                                "name":  "DestinoBronze",
+                                                                "dataset":  {
+                                                                                "referenceName":  "bronze_viajes_v2_dw",
+                                                                                "type":  "DatasetReference"
+                                                                            }
+                                                            }
+                                                        ],
+                                              "transformations":  [
+                                                                      {
+                                                                          "name":  "MapeoCSV"
+                                                                      },
+                                                                      {
+                                                                          "name":  "ColumnasCSV"
+                                                                      },
+                                                                      {
+                                                                          "name":  "MapeoExcel2022"
+                                                                      },
+                                                                      {
+                                                                          "name":  "ColumnasExcel2022"
+                                                                      },
+                                                                      {
+                                                                          "name":  "MapeoExcel2023"
+                                                                      },
+                                                                      {
+                                                                          "name":  "ColumnasExcel2023"
+                                                                      },
+                                                                      {
+                                                                          "name":  "MapeoSQL"
+                                                                      },
+                                                                      {
+                                                                          "name":  "ColumnasSQL"
+                                                                      },
+                                                                      {
+                                                                          "name":  "UnirFuentes"
+                                                                      }
+                                                                  ],
+                                              "scriptLines":  [
+                                                                  "source(output(id_viaje as string, cod_ruta as string, nro_bus as string, fec_servicio as string, hora_programada as string, hora_salida as string, hora_llegada as string, pasajeros_reportados as string, km_recorridos as string, estado_viaje as string, tipo_metrica as string),",
+                                                                  "    allowSchemaDrift: false,",
+                                                                  "    validateSchema: false) ~\u003e OrigenCSV",
+                                                                  "OrigenCSV derive(b_AnioFuente = toString(year(coalesce(toDate(fec_servicio, \u0027dd/MM/yyyy\u0027), toDate(substring(fec_servicio, 1, 10), \u0027yyyy-MM-dd\u0027)))),",
+                                                                  "    b_ViajeId = toString(id_viaje),",
+                                                                  "    b_RutaHistoricaId = toString(null()),",
+                                                                  "    b_VehiculoId = toString(nro_bus),",
+                                                                  "    b_FechaServicio = toString(fec_servicio),",
+                                                                  "    b_HoraProgramada = toString(hora_programada),",
+                                                                  "    b_HoraSalida = toString(hora_salida),",
+                                                                  "    b_HoraLlegada = toString(hora_llegada),",
+                                                                  "    b_ValidacionesTarjeta = toString(null()),",
+                                                                  "    b_KmRecorridos = toString(km_recorridos),",
+                                                                  "    b_EstadoViaje = toString(estado_viaje),",
+                                                                  "    b_CodigoRutaOrigen = toString(cod_ruta),",
+                                                                  "    b_PasajerosReportados = toString(pasajeros_reportados),",
+                                                                  "    b_PasajerosEstimados = toString(null()),",
+                                                                  "    b_TipoMetrica = toString(tipo_metrica),",
+                                                                  "    b_OrigenFuente = \u0027datos_csv/viajes.csv\u0027) ~\u003e MapeoCSV",
+                                                                  "MapeoCSV select(mapColumn(AnioFuente = b_AnioFuente,",
+                                                                  "    ViajeId = b_ViajeId,",
+                                                                  "    RutaHistoricaId = b_RutaHistoricaId,",
+                                                                  "    VehiculoId = b_VehiculoId,",
+                                                                  "    FechaServicio = b_FechaServicio,",
+                                                                  "    HoraProgramada = b_HoraProgramada,",
+                                                                  "    HoraSalida = b_HoraSalida,",
+                                                                  "    HoraLlegada = b_HoraLlegada,",
+                                                                  "    ValidacionesTarjeta = b_ValidacionesTarjeta,",
+                                                                  "    KmRecorridos = b_KmRecorridos,",
+                                                                  "    EstadoViaje = b_EstadoViaje,",
+                                                                  "    CodigoRutaOrigen = b_CodigoRutaOrigen,",
+                                                                  "    PasajerosReportados = b_PasajerosReportados,",
+                                                                  "    PasajerosEstimados = b_PasajerosEstimados,",
+                                                                  "    TipoMetrica = b_TipoMetrica,",
+                                                                  "    OrigenFuente = b_OrigenFuente),",
+                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasCSV",
+                                                                  "source(output(id_viaje as string, cod_ruta as string, nro_bus as string, fecha_servicio as string, hora_programada as string, hora_salida as string, hora_llegada as string, pasajeros_estimados as string, km_recorridos as string, estado_viaje as string, tipo_metrica as string),",
+                                                                  "    allowSchemaDrift: false,",
+                                                                  "    validateSchema: false) ~\u003e OrigenExcel2022",
+                                                                  "OrigenExcel2022 derive(b_AnioFuente = \u00272022\u0027,",
+                                                                  "    b_ViajeId = toString(id_viaje),",
+                                                                  "    b_RutaHistoricaId = toString(null()),",
+                                                                  "    b_VehiculoId = toString(nro_bus),",
+                                                                  "    b_FechaServicio = toString(fecha_servicio),",
+                                                                  "    b_HoraProgramada = toString(hora_programada),",
+                                                                  "    b_HoraSalida = toString(hora_salida),",
+                                                                  "    b_HoraLlegada = toString(hora_llegada),",
+                                                                  "    b_ValidacionesTarjeta = toString(null()),",
+                                                                  "    b_KmRecorridos = toString(km_recorridos),",
+                                                                  "    b_EstadoViaje = toString(estado_viaje),",
+                                                                  "    b_CodigoRutaOrigen = toString(cod_ruta),",
+                                                                  "    b_PasajerosReportados = toString(null()),",
+                                                                  "    b_PasajerosEstimados = toString(pasajeros_estimados),",
+                                                                  "    b_TipoMetrica = toString(tipo_metrica),",
+                                                                  "    b_OrigenFuente = \u0027datos_xls/operacion_2022.xlsx:Viajes\u0027) ~\u003e MapeoExcel2022",
+                                                                  "MapeoExcel2022 select(mapColumn(AnioFuente = b_AnioFuente,",
+                                                                  "    ViajeId = b_ViajeId,",
+                                                                  "    RutaHistoricaId = b_RutaHistoricaId,",
+                                                                  "    VehiculoId = b_VehiculoId,",
+                                                                  "    FechaServicio = b_FechaServicio,",
+                                                                  "    HoraProgramada = b_HoraProgramada,",
+                                                                  "    HoraSalida = b_HoraSalida,",
+                                                                  "    HoraLlegada = b_HoraLlegada,",
+                                                                  "    ValidacionesTarjeta = b_ValidacionesTarjeta,",
+                                                                  "    KmRecorridos = b_KmRecorridos,",
+                                                                  "    EstadoViaje = b_EstadoViaje,",
+                                                                  "    CodigoRutaOrigen = b_CodigoRutaOrigen,",
+                                                                  "    PasajerosReportados = b_PasajerosReportados,",
+                                                                  "    PasajerosEstimados = b_PasajerosEstimados,",
+                                                                  "    TipoMetrica = b_TipoMetrica,",
+                                                                  "    OrigenFuente = b_OrigenFuente),",
+                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasExcel2022",
+                                                                  "source(output(id_viaje as string, cod_ruta as string, nro_bus as string, fecha_servicio as string, hora_programada as string, hora_salida as string, hora_llegada as string, pasajeros_estimados as string, km_recorridos as string, estado_viaje as string, tipo_metrica as string),",
+                                                                  "    allowSchemaDrift: false,",
+                                                                  "    validateSchema: false) ~\u003e OrigenExcel2023",
+                                                                  "OrigenExcel2023 derive(b_AnioFuente = \u00272023\u0027,",
+                                                                  "    b_ViajeId = toString(id_viaje),",
+                                                                  "    b_RutaHistoricaId = toString(null()),",
+                                                                  "    b_VehiculoId = toString(nro_bus),",
+                                                                  "    b_FechaServicio = toString(fecha_servicio),",
+                                                                  "    b_HoraProgramada = toString(hora_programada),",
+                                                                  "    b_HoraSalida = toString(hora_salida),",
+                                                                  "    b_HoraLlegada = toString(hora_llegada),",
+                                                                  "    b_ValidacionesTarjeta = toString(null()),",
+                                                                  "    b_KmRecorridos = toString(km_recorridos),",
+                                                                  "    b_EstadoViaje = toString(estado_viaje),",
+                                                                  "    b_CodigoRutaOrigen = toString(cod_ruta),",
+                                                                  "    b_PasajerosReportados = toString(null()),",
+                                                                  "    b_PasajerosEstimados = toString(pasajeros_estimados),",
+                                                                  "    b_TipoMetrica = toString(tipo_metrica),",
+                                                                  "    b_OrigenFuente = \u0027datos_xls/operacion_2023.xlsx:Viajes\u0027) ~\u003e MapeoExcel2023",
+                                                                  "MapeoExcel2023 select(mapColumn(AnioFuente = b_AnioFuente,",
+                                                                  "    ViajeId = b_ViajeId,",
+                                                                  "    RutaHistoricaId = b_RutaHistoricaId,",
+                                                                  "    VehiculoId = b_VehiculoId,",
+                                                                  "    FechaServicio = b_FechaServicio,",
+                                                                  "    HoraProgramada = b_HoraProgramada,",
+                                                                  "    HoraSalida = b_HoraSalida,",
+                                                                  "    HoraLlegada = b_HoraLlegada,",
+                                                                  "    ValidacionesTarjeta = b_ValidacionesTarjeta,",
+                                                                  "    KmRecorridos = b_KmRecorridos,",
+                                                                  "    EstadoViaje = b_EstadoViaje,",
+                                                                  "    CodigoRutaOrigen = b_CodigoRutaOrigen,",
+                                                                  "    PasajerosReportados = b_PasajerosReportados,",
+                                                                  "    PasajerosEstimados = b_PasajerosEstimados,",
+                                                                  "    TipoMetrica = b_TipoMetrica,",
+                                                                  "    OrigenFuente = b_OrigenFuente),",
+                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasExcel2023",
+                                                                  "source(output(AnioFuente as string, ViajeId as string, RutaHistoricaId as string, VehiculoId as string, FechaServicio as string, HoraProgramada as string, HoraSalida as string, HoraLlegada as string, ValidacionesTarjeta as string, KmRecorridos as string, EstadoViaje as string),",
+                                                                  "    allowSchemaDrift: false,",
+                                                                  "    validateSchema: false,",
+                                                                  "    isolationLevel: \u0027READ_COMMITTED\u0027,",
+                                                                  "    query: \u0027SELECT CONVERT(varchar(255), [AnioFuente]) AS [AnioFuente], CONVERT(varchar(255), [ViajeId]) AS [ViajeId], CONVERT(varchar(255), [RutaHistoricaId]) AS [RutaHistoricaId], CONVERT(varchar(255), [VehiculoId]) AS [VehiculoId], CONVERT(varchar(255), [FechaServicio], 23) AS [FechaServicio], CONVERT(varchar(255), [HoraProgramada], 8) AS [HoraProgramada], CONVERT(varchar(255), [HoraSalida], 8) AS [HoraSalida], CONVERT(varchar(255), [HoraLlegada], 8) AS [HoraLlegada], CONVERT(varchar(255), [ValidacionesTarjeta]) AS [ValidacionesTarjeta], CONVERT(varchar(255), [KmRecorridos]) AS [KmRecorridos], CONVERT(varchar(255), [EstadoViaje]) AS [EstadoViaje] FROM dbo.ViajesAzure\u0027,",
+                                                                  "    format: \u0027query\u0027) ~\u003e OrigenSQL",
+                                                                  "OrigenSQL derive(b_AnioFuente = toString(AnioFuente),",
+                                                                  "    b_ViajeId = toString(ViajeId),",
+                                                                  "    b_RutaHistoricaId = toString(RutaHistoricaId),",
+                                                                  "    b_VehiculoId = toString(VehiculoId),",
+                                                                  "    b_FechaServicio = toString(FechaServicio),",
+                                                                  "    b_HoraProgramada = toString(HoraProgramada),",
+                                                                  "    b_HoraSalida = toString(HoraSalida),",
+                                                                  "    b_HoraLlegada = toString(HoraLlegada),",
+                                                                  "    b_ValidacionesTarjeta = toString(ValidacionesTarjeta),",
+                                                                  "    b_KmRecorridos = toString(KmRecorridos),",
+                                                                  "    b_EstadoViaje = toString(EstadoViaje),",
+                                                                  "    b_CodigoRutaOrigen = toString(null()),",
+                                                                  "    b_PasajerosReportados = toString(null()),",
+                                                                  "    b_PasajerosEstimados = toString(null()),",
+                                                                  "    b_TipoMetrica = \u0027VALIDACIONES_TARJETA\u0027,",
+                                                                  "    b_OrigenFuente = \u0027erp_transporte_db.dbo.ViajesAzure\u0027) ~\u003e MapeoSQL",
+                                                                  "MapeoSQL select(mapColumn(AnioFuente = b_AnioFuente,",
+                                                                  "    ViajeId = b_ViajeId,",
+                                                                  "    RutaHistoricaId = b_RutaHistoricaId,",
+                                                                  "    VehiculoId = b_VehiculoId,",
+                                                                  "    FechaServicio = b_FechaServicio,",
+                                                                  "    HoraProgramada = b_HoraProgramada,",
+                                                                  "    HoraSalida = b_HoraSalida,",
+                                                                  "    HoraLlegada = b_HoraLlegada,",
+                                                                  "    ValidacionesTarjeta = b_ValidacionesTarjeta,",
+                                                                  "    KmRecorridos = b_KmRecorridos,",
+                                                                  "    EstadoViaje = b_EstadoViaje,",
+                                                                  "    CodigoRutaOrigen = b_CodigoRutaOrigen,",
+                                                                  "    PasajerosReportados = b_PasajerosReportados,",
+                                                                  "    PasajerosEstimados = b_PasajerosEstimados,",
+                                                                  "    TipoMetrica = b_TipoMetrica,",
+                                                                  "    OrigenFuente = b_OrigenFuente),",
+                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasSQL",
+                                                                  "ColumnasCSV, ColumnasExcel2022, ColumnasExcel2023, ColumnasSQL union(byName: true) ~\u003e UnirFuentes",
+                                                                  "UnirFuentes sink(input(AnioFuente as string, ViajeId as string, RutaHistoricaId as string, VehiculoId as string, FechaServicio as string, HoraProgramada as string, HoraSalida as string, HoraLlegada as string, ValidacionesTarjeta as string, KmRecorridos as string, EstadoViaje as string, CodigoRutaOrigen as string, PasajerosReportados as string, PasajerosEstimados as string, TipoMetrica as string, OrigenFuente as string),",
+                                                                  "    allowSchemaDrift: true, validateSchema: false,",
+                                                                  "    deletable: false, insertable: true, updateable: false, upsertable: false,",
+                                                                  "    format: \u0027table\u0027, skipDuplicateMapInputs: true, skipDuplicateMapOutputs: true,",
+                                                                  "    errorHandlingOption: \u0027stopOnFirstError\u0027,",
+                                                                  "    mapColumn(AnioFuente, ViajeId, RutaHistoricaId, VehiculoId, FechaServicio, HoraProgramada, HoraSalida, HoraLlegada, ValidacionesTarjeta, KmRecorridos, EstadoViaje, CodigoRutaOrigen, PasajerosReportados, PasajerosEstimados, TipoMetrica, OrigenFuente)) ~\u003e DestinoBronze"
+                                                              ]
+                                          }
+                   },
+    "name":  "df_bronze_viajes_9887212"
+}

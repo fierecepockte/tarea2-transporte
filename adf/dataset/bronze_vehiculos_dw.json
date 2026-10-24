@@ -1,19 +1,54 @@
 {
-  "name": "bronze_vehiculos_dw",
-  "properties": {
-    "linkedServiceName": {
-      "referenceName": "sql_dw_transporte",
-      "type": "LinkedServiceReference"
-    },
-    "annotations": [],
-    "folder": {
-      "name": "bronze/dw"
-    },
-    "type": "AzureSqlTable",
-    "typeProperties": {
-      "schema": "bronze",
-      "table": "VehiculosAzure"
-    },
-    "schema": []
-  }
+    "properties":  {
+                       "annotations":  [
+
+                                       ],
+                       "folder":  {
+                                      "name":  "bronze/dw"
+                                  },
+                       "linkedServiceName":  {
+                                                 "referenceName":  "sql_dw_transporte",
+                                                 "type":  "LinkedServiceReference"
+                                             },
+                       "type":  "AzureSqlTable",
+                       "typeProperties":  {
+                                              "schema":  "bronze",
+                                              "table":  "VehiculosAzure"
+                                          },
+                       "schema":  [
+                                      {
+                                          "name":  "AnioFuente",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "VehiculoId",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "Placa",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "TipoVehiculo",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "CapacidadEfectiva",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "VigenciaDesde",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "VigenciaHasta",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "Estado",
+                                          "type":  "varchar"
+                                      }
+                                  ]
+                   },
+    "name":  "bronze_vehiculos_dw"
 }

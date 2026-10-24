@@ -1,0 +1,86 @@
+{
+    "properties":  {
+                       "annotations":  [
+                                           "tarea2-9887212-flujos-v2"
+                                       ],
+                       "folder":  {
+                                      "name":  "bronze/automatico"
+                                  },
+                       "linkedServiceName":  {
+                                                 "referenceName":  "sql_dw_transporte",
+                                                 "type":  "LinkedServiceReference"
+                                             },
+                       "type":  "AzureSqlTable",
+                       "typeProperties":  {
+                                              "schema":  "bronze",
+                                              "table":  "ViajesAzure"
+                                          },
+                       "schema":  [
+                                      {
+                                          "name":  "AnioFuente",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "ViajeId",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "RutaHistoricaId",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "VehiculoId",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "FechaServicio",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "HoraProgramada",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "HoraSalida",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "HoraLlegada",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "ValidacionesTarjeta",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "KmRecorridos",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "EstadoViaje",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "CodigoRutaOrigen",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "PasajerosReportados",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "PasajerosEstimados",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "TipoMetrica",
+                                          "type":  "varchar"
+                                      },
+                                      {
+                                          "name":  "OrigenFuente",
+                                          "type":  "varchar"
+                                      }
+                                  ]
+                   },
+    "name":  "bronze_viajes_v2_dw"
+}

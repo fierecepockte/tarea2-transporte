@@ -1,0 +1,76 @@
+{
+    "name":  "pl_silver_9887212",
+    "properties":  {
+                       "description":  "Tarea 2 - silver - generado para los videos 4.11 y 5.5. Reutiliza los Mapping Data Flows existentes.",
+                       "activities":  [
+                                          {
+                                              "name":  "CargarParadas",
+                                              "type":  "ExecuteDataFlow",
+                                              "dependsOn":  [
+
+                                                            ],
+                                              "policy":  {
+                                                             "retryIntervalInSeconds":  30,
+                                                             "secureInput":  false,
+                                                             "retry":  0,
+                                                             "timeout":  "01:00:00",
+                                                             "secureOutput":  false
+                                                         },
+                                              "userProperties":  [
+
+                                                                 ],
+                                              "typeProperties":  {
+                                                                     "dataflow":  {
+                                                                                      "referenceName":  "df_silver_paradas_9887212",
+                                                                                      "type":  "DataFlowReference"
+                                                                                  },
+                                                                     "traceLevel":  "Coarse",
+                                                                     "compute":  {
+                                                                                     "coreCount":  8,
+                                                                                     "computeType":  "General"
+                                                                                 }
+                                                                 }
+                                          },
+                                          {
+                                              "name":  "CargarVehiculos",
+                                              "type":  "ExecuteDataFlow",
+                                              "dependsOn":  [
+                                                                {
+                                                                    "activity":  "CargarParadas",
+                                                                    "dependencyConditions":  [
+                                                                                                 "Succeeded"
+                                                                                             ]
+                                                                }
+                                                            ],
+                                              "policy":  {
+                                                             "retryIntervalInSeconds":  30,
+                                                             "secureInput":  false,
+                                                             "retry":  0,
+                                                             "timeout":  "01:00:00",
+                                                             "secureOutput":  false
+                                                         },
+                                              "userProperties":  [
+
+                                                                 ],
+                                              "typeProperties":  {
+                                                                     "dataflow":  {
+                                                                                      "referenceName":  "df_silver_vehiculos_9887212",
+                                                                                      "type":  "DataFlowReference"
+                                                                                  },
+                                                                     "traceLevel":  "Coarse",
+                                                                     "compute":  {
+                                                                                     "coreCount":  8,
+                                                                                     "computeType":  "General"
+                                                                                 }
+                                                                 }
+                                          }
+                                      ],
+                       "concurrency":  1,
+                       "folder":  {
+                                      "name":  "silver"
+                                  },
+                       "annotations":  [
+                                           "tarea2-9887212-videos-411-51-55-v1"
+                                       ]
+                   }
+}

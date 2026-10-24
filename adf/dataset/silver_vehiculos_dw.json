@@ -1,0 +1,54 @@
+{
+    "properties":  {
+                       "annotations":  [
+                                           "tarea2-9887212-flujos-v2"
+                                       ],
+                       "folder":  {
+                                      "name":  "silver/automatico"
+                                  },
+                       "linkedServiceName":  {
+                                                 "referenceName":  "sql_dw_transporte",
+                                                 "type":  "LinkedServiceReference"
+                                             },
+                       "type":  "AzureSqlTable",
+                       "typeProperties":  {
+                                              "schema":  "silver",
+                                              "table":  "VehiculosAzure"
+                                          },
+                       "schema":  [
+                                      {
+                                          "name":  "AnioFuente",
+                                          "type":  "smallint"
+                                      },
+                                      {
+                                          "name":  "VehiculoId",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "Placa",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "TipoVehiculo",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "CapacidadEfectiva",
+                                          "type":  "int"
+                                      },
+                                      {
+                                          "name":  "VigenciaDesde",
+                                          "type":  "date"
+                                      },
+                                      {
+                                          "name":  "VigenciaHasta",
+                                          "type":  "date"
+                                      },
+                                      {
+                                          "name":  "Estado",
+                                          "type":  "nvarchar"
+                                      }
+                                  ]
+                   },
+    "name":  "silver_vehiculos_dw"
+}

@@ -1,0 +1,58 @@
+{
+    "properties":  {
+                       "annotations":  [
+                                           "tarea2-9887212-flujos-v2"
+                                       ],
+                       "folder":  {
+                                      "name":  "auditoria/automatico"
+                                  },
+                       "linkedServiceName":  {
+                                                 "referenceName":  "sql_dw_transporte",
+                                                 "type":  "LinkedServiceReference"
+                                             },
+                       "type":  "AzureSqlTable",
+                       "typeProperties":  {
+                                              "schema":  "auditoria",
+                                              "table":  "VehiculosObservados"
+                                          },
+                       "schema":  [
+                                      {
+                                          "name":  "AnioFuente",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "VehiculoId",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "Placa",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "TipoVehiculo",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "CapacidadEfectiva",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "VigenciaDesde",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "VigenciaHasta",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "Estado",
+                                          "type":  "nvarchar"
+                                      },
+                                      {
+                                          "name":  "Motivo",
+                                          "type":  "nvarchar"
+                                      }
+                                  ]
+                   },
+    "name":  "observados_vehiculos_dw"
+}
