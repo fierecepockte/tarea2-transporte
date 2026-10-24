@@ -53,6 +53,237 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/pl_bronze_9887212')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Tarea 2 - bronze - generado para los videos 4.11 y 5.5. Reutiliza los Mapping Data Flows existentes.",
+				"activities": [
+					{
+						"name": "CargarParadas",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_bronze_paradas_9887212",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrigenCSV": {},
+									"OrigenExcel2022": {},
+									"OrigenExcel2023": {},
+									"OrigenSQL": {},
+									"DestinoBronze": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					},
+					{
+						"name": "CargarVehiculos",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CargarParadas",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_bronze_vehiculos_9887212",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrigenCSV": {},
+									"OrigenExcel2022": {},
+									"OrigenExcel2023": {},
+									"OrigenSQL": {},
+									"DestinoBronze": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					},
+					{
+						"name": "CargarViajes",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CargarVehiculos",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_bronze_viajes_9887212",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrigenCSV": {},
+									"OrigenExcel2022": {},
+									"OrigenExcel2023": {},
+									"OrigenSQL": {},
+									"DestinoBronze": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					}
+				],
+				"concurrency": 1,
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [
+					"tarea2-9887212-videos-411-51-55-v1"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_bronze_paradas_9887212')]",
+				"[concat(variables('factoryId'), '/dataflows/df_bronze_vehiculos_9887212')]",
+				"[concat(variables('factoryId'), '/dataflows/df_bronze_viajes_9887212')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_silver_9887212')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Tarea 2 - silver - generado para los videos 4.11 y 5.5. Reutiliza los Mapping Data Flows existentes.",
+				"activities": [
+					{
+						"name": "CargarParadas",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_silver_paradas_9887212",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrigenBronze": {},
+									"DestinoSilver": {},
+									"DestinoObservados": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					},
+					{
+						"name": "CargarVehiculos",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CargarParadas",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "01:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_silver_vehiculos_9887212",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"OrigenBronze": {},
+									"DestinoSilver": {},
+									"DestinoObservados": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					}
+				],
+				"concurrency": 1,
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [
+					"tarea2-9887212-videos-411-51-55-v1"
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_silver_paradas_9887212')]",
+				"[concat(variables('factoryId'), '/dataflows/df_silver_vehiculos_9887212')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/bronze_demanda_paradas_2022_xls')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -810,7 +1041,48 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "varchar"
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "varchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "varchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "varchar"
+					},
+					{
+						"name": "Zona",
+						"type": "varchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "varchar"
+					},
+					{
+						"name": "Longitud",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "varchar"
+					},
+					{
+						"name": "Estado",
+						"type": "varchar"
+					}
+				],
 				"typeProperties": {
 					"schema": "bronze",
 					"table": "ParadasAzure"
@@ -834,7 +1106,53 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zona",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "Longitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "date"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "date"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					}
+				],
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "ParadasAzure"
@@ -1258,7 +1576,40 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "varchar"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "varchar"
+					},
+					{
+						"name": "Placa",
+						"type": "varchar"
+					},
+					{
+						"name": "TipoVehiculo",
+						"type": "varchar"
+					},
+					{
+						"name": "CapacidadEfectiva",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "varchar"
+					},
+					{
+						"name": "Estado",
+						"type": "varchar"
+					}
+				],
 				"typeProperties": {
 					"schema": "bronze",
 					"table": "VehiculosAzure"
@@ -1565,6 +1916,361 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/bronze_viajes_v2_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "varchar"
+					},
+					{
+						"name": "ViajeId",
+						"type": "varchar"
+					},
+					{
+						"name": "RutaHistoricaId",
+						"type": "varchar"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "varchar"
+					},
+					{
+						"name": "FechaServicio",
+						"type": "varchar"
+					},
+					{
+						"name": "HoraProgramada",
+						"type": "varchar"
+					},
+					{
+						"name": "HoraSalida",
+						"type": "varchar"
+					},
+					{
+						"name": "HoraLlegada",
+						"type": "varchar"
+					},
+					{
+						"name": "ValidacionesTarjeta",
+						"type": "varchar"
+					},
+					{
+						"name": "KmRecorridos",
+						"type": "varchar"
+					},
+					{
+						"name": "EstadoViaje",
+						"type": "varchar"
+					},
+					{
+						"name": "CodigoRutaOrigen",
+						"type": "varchar"
+					},
+					{
+						"name": "PasajerosReportados",
+						"type": "varchar"
+					},
+					{
+						"name": "PasajerosEstimados",
+						"type": "varchar"
+					},
+					{
+						"name": "TipoMetrica",
+						"type": "varchar"
+					},
+					{
+						"name": "OrigenFuente",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "bronze",
+					"table": "ViajesAzure"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_dw_transporte')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/observados_paradas_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "auditoria/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zona",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Longitud",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Motivo",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "auditoria",
+					"table": "ParadasObservadas"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_dw_transporte')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/observados_vehiculos_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "auditoria/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Placa",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TipoVehiculo",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CapacidadEfectiva",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Motivo",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "auditoria",
+					"table": "VehiculosObservados"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_dw_transporte')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_paradas_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "smallint"
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zona",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "Longitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "date"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "date"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "ParadasAzure"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_dw_transporte')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_vehiculos_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "smallint"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Placa",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TipoVehiculo",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CapacidadEfectiva",
+						"type": "int"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "date"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "date"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "VehiculosAzure"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sql_dw_transporte')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ls_transporte')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1624,6 +2330,1294 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_bronze_paradas_9887212')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Bronze: conserva filas y valores de CSV 2020-2021, Excel 2022/2023 y SQL 2024/2025. Homologa columnas; no elimina duplicados.",
+				"folder": {
+					"name": "bronze"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "bronze_paradas_csv",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_paradas_2022_xls",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenExcel2022"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_paradas_2023_xls",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenExcel2023"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_paradas_sql",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenSQL"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "bronze_paradas_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoBronze"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapeoCSV"
+						},
+						{
+							"name": "ColumnasCSV"
+						},
+						{
+							"name": "MapeoExcel2022"
+						},
+						{
+							"name": "ColumnasExcel2022"
+						},
+						{
+							"name": "MapeoExcel2023"
+						},
+						{
+							"name": "ColumnasExcel2023"
+						},
+						{
+							"name": "MapeoSQL"
+						},
+						{
+							"name": "ColumnasSQL"
+						},
+						{
+							"name": "UnirFuentes"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          nro_parada as string,",
+						"          nombre_parada as string,",
+						"          zona as string,",
+						"          latitud as string,",
+						"          longitud as string,",
+						"          fecha_desde as string,",
+						"          fecha_hasta as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenCSV",
+						"source(output(",
+						"          nro_parada as string,",
+						"          nombre_parada as string,",
+						"          zona as string,",
+						"          latitud as string,",
+						"          longitud as string,",
+						"          fecha_desde as string,",
+						"          fecha_hasta as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenExcel2022",
+						"source(output(",
+						"          nro_parada as string,",
+						"          nombre_parada as string,",
+						"          zona as string,",
+						"          latitud as string,",
+						"          longitud as string,",
+						"          fecha_desde as string,",
+						"          fecha_hasta as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenExcel2023",
+						"source(output(",
+						"          AnioFuente as string,",
+						"          ParadaHistoricaId as string,",
+						"          CodigoPublicado as string,",
+						"          NombreParada as string,",
+						"          Zona as string,",
+						"          Latitud as string,",
+						"          Longitud as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_COMMITTED',",
+						"     query: 'SELECT CONVERT(varchar(255), [AnioFuente]) AS [AnioFuente], CONVERT(varchar(255), [ParadaHistoricaId]) AS [ParadaHistoricaId], CONVERT(varchar(255), [CodigoPublicado]) AS [CodigoPublicado], CONVERT(varchar(255), [NombreParada]) AS [NombreParada], CONVERT(varchar(255), [Zona]) AS [Zona], CONVERT(varchar(255), [Latitud]) AS [Latitud], CONVERT(varchar(255), [Longitud]) AS [Longitud], CONVERT(varchar(255), [VigenciaDesde], 23) AS [VigenciaDesde], CONVERT(varchar(255), [VigenciaHasta], 23) AS [VigenciaHasta], CONVERT(varchar(255), [Estado]) AS [Estado] FROM dbo.ParadasAzure',",
+						"     format: 'query') ~> OrigenSQL",
+						"OrigenCSV derive(b_AnioFuente = '2020-2021',",
+						"          b_ParadaHistoricaId = toString(nro_parada),",
+						"          b_CodigoPublicado = toString(nro_parada),",
+						"          b_NombreParada = toString(nombre_parada),",
+						"          b_Zona = toString(zona),",
+						"          b_Latitud = toString(latitud),",
+						"          b_Longitud = toString(longitud),",
+						"          b_VigenciaDesde = toString(fecha_desde),",
+						"          b_VigenciaHasta = toString(fecha_hasta),",
+						"          b_Estado = toString(estado)) ~> MapeoCSV",
+						"MapeoCSV select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ParadaHistoricaId = b_ParadaHistoricaId,",
+						"          CodigoPublicado = b_CodigoPublicado,",
+						"          NombreParada = b_NombreParada,",
+						"          Zona = b_Zona,",
+						"          Latitud = b_Latitud,",
+						"          Longitud = b_Longitud,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasCSV",
+						"OrigenExcel2022 derive(b_AnioFuente = '2022',",
+						"          b_ParadaHistoricaId = toString(nro_parada),",
+						"          b_CodigoPublicado = toString(nro_parada),",
+						"          b_NombreParada = toString(nombre_parada),",
+						"          b_Zona = toString(zona),",
+						"          b_Latitud = toString(latitud),",
+						"          b_Longitud = toString(longitud),",
+						"          b_VigenciaDesde = toString(fecha_desde),",
+						"          b_VigenciaHasta = toString(fecha_hasta),",
+						"          b_Estado = toString(estado)) ~> MapeoExcel2022",
+						"MapeoExcel2022 select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ParadaHistoricaId = b_ParadaHistoricaId,",
+						"          CodigoPublicado = b_CodigoPublicado,",
+						"          NombreParada = b_NombreParada,",
+						"          Zona = b_Zona,",
+						"          Latitud = b_Latitud,",
+						"          Longitud = b_Longitud,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasExcel2022",
+						"OrigenExcel2023 derive(b_AnioFuente = '2023',",
+						"          b_ParadaHistoricaId = toString(nro_parada),",
+						"          b_CodigoPublicado = toString(nro_parada),",
+						"          b_NombreParada = toString(nombre_parada),",
+						"          b_Zona = toString(zona),",
+						"          b_Latitud = toString(latitud),",
+						"          b_Longitud = toString(longitud),",
+						"          b_VigenciaDesde = toString(fecha_desde),",
+						"          b_VigenciaHasta = toString(fecha_hasta),",
+						"          b_Estado = toString(estado)) ~> MapeoExcel2023",
+						"MapeoExcel2023 select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ParadaHistoricaId = b_ParadaHistoricaId,",
+						"          CodigoPublicado = b_CodigoPublicado,",
+						"          NombreParada = b_NombreParada,",
+						"          Zona = b_Zona,",
+						"          Latitud = b_Latitud,",
+						"          Longitud = b_Longitud,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasExcel2023",
+						"OrigenSQL derive(b_AnioFuente = toString(AnioFuente),",
+						"          b_ParadaHistoricaId = toString(ParadaHistoricaId),",
+						"          b_CodigoPublicado = toString(CodigoPublicado),",
+						"          b_NombreParada = toString(NombreParada),",
+						"          b_Zona = toString(Zona),",
+						"          b_Latitud = toString(Latitud),",
+						"          b_Longitud = toString(Longitud),",
+						"          b_VigenciaDesde = toString(VigenciaDesde),",
+						"          b_VigenciaHasta = toString(VigenciaHasta),",
+						"          b_Estado = toString(Estado)) ~> MapeoSQL",
+						"MapeoSQL select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ParadaHistoricaId = b_ParadaHistoricaId,",
+						"          CodigoPublicado = b_CodigoPublicado,",
+						"          NombreParada = b_NombreParada,",
+						"          Zona = b_Zona,",
+						"          Latitud = b_Latitud,",
+						"          Longitud = b_Longitud,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasSQL",
+						"ColumnasCSV, ColumnasExcel2022, ColumnasExcel2023, ColumnasSQL union(byName: true)~> UnirFuentes",
+						"UnirFuentes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as string,",
+						"          ParadaHistoricaId as string,",
+						"          CodigoPublicado as string,",
+						"          NombreParada as string,",
+						"          Zona as string,",
+						"          Latitud as string,",
+						"          Longitud as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          ParadaHistoricaId,",
+						"          CodigoPublicado,",
+						"          NombreParada,",
+						"          Zona,",
+						"          Latitud,",
+						"          Longitud,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado",
+						"     )) ~> DestinoBronze"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/bronze_paradas_csv')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_paradas_2022_xls')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_paradas_2023_xls')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_paradas_sql')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_paradas_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_bronze_vehiculos_9887212')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Bronze: conserva filas y valores de CSV 2020-2021, Excel 2022/2023 y SQL 2024/2025. Homologa columnas; no elimina duplicados.",
+				"folder": {
+					"name": "bronze"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "bronze_vehiculos_csv",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_vehiculos_2022_xls",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenExcel2022"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_vehiculos_2023_xls",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenExcel2023"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_vehiculos_sql",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenSQL"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "bronze_vehiculos_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoBronze"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapeoCSV"
+						},
+						{
+							"name": "ColumnasCSV"
+						},
+						{
+							"name": "MapeoExcel2022"
+						},
+						{
+							"name": "ColumnasExcel2022"
+						},
+						{
+							"name": "MapeoExcel2023"
+						},
+						{
+							"name": "ColumnasExcel2023"
+						},
+						{
+							"name": "MapeoSQL"
+						},
+						{
+							"name": "ColumnasSQL"
+						},
+						{
+							"name": "UnirFuentes"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          nro_bus as string,",
+						"          placa as string,",
+						"          tipo_bus as string,",
+						"          capacidad as string,",
+						"          fecha_desde as string,",
+						"          fecha_hasta as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenCSV",
+						"source(output(",
+						"          nro_bus as string,",
+						"          placa as string,",
+						"          tipo_bus as string,",
+						"          capacidad as string,",
+						"          fecha_desde as string,",
+						"          fecha_hasta as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenExcel2022",
+						"source(output(",
+						"          nro_bus as string,",
+						"          placa as string,",
+						"          tipo_bus as string,",
+						"          capacidad as string,",
+						"          fecha_desde as string,",
+						"          fecha_hasta as string,",
+						"          estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenExcel2023",
+						"source(output(",
+						"          AnioFuente as string,",
+						"          VehiculoId as string,",
+						"          Placa as string,",
+						"          TipoVehiculo as string,",
+						"          CapacidadEfectiva as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_COMMITTED',",
+						"     query: 'SELECT CONVERT(varchar(255), [AnioFuente]) AS [AnioFuente], CONVERT(varchar(255), [VehiculoId]) AS [VehiculoId], CONVERT(varchar(255), [Placa]) AS [Placa], CONVERT(varchar(255), [TipoVehiculo]) AS [TipoVehiculo], CONVERT(varchar(255), [CapacidadEfectiva]) AS [CapacidadEfectiva], CONVERT(varchar(255), [VigenciaDesde], 23) AS [VigenciaDesde], CONVERT(varchar(255), [VigenciaHasta], 23) AS [VigenciaHasta], CONVERT(varchar(255), [Estado]) AS [Estado] FROM dbo.VehiculosAzure',",
+						"     format: 'query') ~> OrigenSQL",
+						"OrigenCSV derive(b_AnioFuente = '2020-2021',",
+						"          b_VehiculoId = toString(nro_bus),",
+						"          b_Placa = toString(placa),",
+						"          b_TipoVehiculo = toString(tipo_bus),",
+						"          b_CapacidadEfectiva = toString(capacidad),",
+						"          b_VigenciaDesde = toString(fecha_desde),",
+						"          b_VigenciaHasta = toString(fecha_hasta),",
+						"          b_Estado = toString(estado)) ~> MapeoCSV",
+						"MapeoCSV select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          VehiculoId = b_VehiculoId,",
+						"          Placa = b_Placa,",
+						"          TipoVehiculo = b_TipoVehiculo,",
+						"          CapacidadEfectiva = b_CapacidadEfectiva,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasCSV",
+						"OrigenExcel2022 derive(b_AnioFuente = '2022',",
+						"          b_VehiculoId = toString(nro_bus),",
+						"          b_Placa = toString(placa),",
+						"          b_TipoVehiculo = toString(tipo_bus),",
+						"          b_CapacidadEfectiva = toString(capacidad),",
+						"          b_VigenciaDesde = toString(fecha_desde),",
+						"          b_VigenciaHasta = toString(fecha_hasta),",
+						"          b_Estado = toString(estado)) ~> MapeoExcel2022",
+						"MapeoExcel2022 select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          VehiculoId = b_VehiculoId,",
+						"          Placa = b_Placa,",
+						"          TipoVehiculo = b_TipoVehiculo,",
+						"          CapacidadEfectiva = b_CapacidadEfectiva,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasExcel2022",
+						"OrigenExcel2023 derive(b_AnioFuente = '2023',",
+						"          b_VehiculoId = toString(nro_bus),",
+						"          b_Placa = toString(placa),",
+						"          b_TipoVehiculo = toString(tipo_bus),",
+						"          b_CapacidadEfectiva = toString(capacidad),",
+						"          b_VigenciaDesde = toString(fecha_desde),",
+						"          b_VigenciaHasta = toString(fecha_hasta),",
+						"          b_Estado = toString(estado)) ~> MapeoExcel2023",
+						"MapeoExcel2023 select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          VehiculoId = b_VehiculoId,",
+						"          Placa = b_Placa,",
+						"          TipoVehiculo = b_TipoVehiculo,",
+						"          CapacidadEfectiva = b_CapacidadEfectiva,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasExcel2023",
+						"OrigenSQL derive(b_AnioFuente = toString(AnioFuente),",
+						"          b_VehiculoId = toString(VehiculoId),",
+						"          b_Placa = toString(Placa),",
+						"          b_TipoVehiculo = toString(TipoVehiculo),",
+						"          b_CapacidadEfectiva = toString(CapacidadEfectiva),",
+						"          b_VigenciaDesde = toString(VigenciaDesde),",
+						"          b_VigenciaHasta = toString(VigenciaHasta),",
+						"          b_Estado = toString(Estado)) ~> MapeoSQL",
+						"MapeoSQL select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          VehiculoId = b_VehiculoId,",
+						"          Placa = b_Placa,",
+						"          TipoVehiculo = b_TipoVehiculo,",
+						"          CapacidadEfectiva = b_CapacidadEfectiva,",
+						"          VigenciaDesde = b_VigenciaDesde,",
+						"          VigenciaHasta = b_VigenciaHasta,",
+						"          Estado = b_Estado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasSQL",
+						"ColumnasCSV, ColumnasExcel2022, ColumnasExcel2023, ColumnasSQL union(byName: true)~> UnirFuentes",
+						"UnirFuentes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as string,",
+						"          VehiculoId as string,",
+						"          Placa as string,",
+						"          TipoVehiculo as string,",
+						"          CapacidadEfectiva as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          VehiculoId,",
+						"          Placa,",
+						"          TipoVehiculo,",
+						"          CapacidadEfectiva,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado",
+						"     )) ~> DestinoBronze"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/bronze_vehiculos_csv')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_vehiculos_2022_xls')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_vehiculos_2023_xls')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_vehiculos_sql')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_vehiculos_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_bronze_viajes_9887212')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Bronze: conserva filas y valores de CSV 2020-2021, Excel 2022/2023 y SQL 2024/2025. Homologa columnas; no elimina duplicados. Reportados y estimados se conservan en columnas propias; no se convierten en validaciones de tarjeta. El codigo de ruta del archivo se conserva en CodigoRutaOrigen.",
+				"folder": {
+					"name": "bronze"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "bronze_viajes_csv",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenCSV"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_viajes_2022_xls",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenExcel2022"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_viajes_2023_xls",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenExcel2023"
+						},
+						{
+							"dataset": {
+								"referenceName": "bronze_viajes_sql",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenSQL"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "bronze_viajes_v2_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoBronze"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapeoCSV"
+						},
+						{
+							"name": "ColumnasCSV"
+						},
+						{
+							"name": "MapeoExcel2022"
+						},
+						{
+							"name": "ColumnasExcel2022"
+						},
+						{
+							"name": "MapeoExcel2023"
+						},
+						{
+							"name": "ColumnasExcel2023"
+						},
+						{
+							"name": "MapeoSQL"
+						},
+						{
+							"name": "ColumnasSQL"
+						},
+						{
+							"name": "UnirFuentes"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id_viaje as string,",
+						"          cod_ruta as string,",
+						"          nro_bus as string,",
+						"          fec_servicio as string,",
+						"          hora_programada as string,",
+						"          hora_salida as string,",
+						"          hora_llegada as string,",
+						"          pasajeros_reportados as string,",
+						"          km_recorridos as string,",
+						"          estado_viaje as string,",
+						"          tipo_metrica as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenCSV",
+						"source(output(",
+						"          id_viaje as string,",
+						"          cod_ruta as string,",
+						"          nro_bus as string,",
+						"          fecha_servicio as string,",
+						"          hora_programada as string,",
+						"          hora_salida as string,",
+						"          hora_llegada as string,",
+						"          pasajeros_estimados as string,",
+						"          km_recorridos as string,",
+						"          estado_viaje as string,",
+						"          tipo_metrica as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenExcel2022",
+						"source(output(",
+						"          id_viaje as string,",
+						"          cod_ruta as string,",
+						"          nro_bus as string,",
+						"          fecha_servicio as string,",
+						"          hora_programada as string,",
+						"          hora_salida as string,",
+						"          hora_llegada as string,",
+						"          pasajeros_estimados as string,",
+						"          km_recorridos as string,",
+						"          estado_viaje as string,",
+						"          tipo_metrica as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> OrigenExcel2023",
+						"source(output(",
+						"          AnioFuente as string,",
+						"          ViajeId as string,",
+						"          RutaHistoricaId as string,",
+						"          VehiculoId as string,",
+						"          FechaServicio as string,",
+						"          HoraProgramada as string,",
+						"          HoraSalida as string,",
+						"          HoraLlegada as string,",
+						"          ValidacionesTarjeta as string,",
+						"          KmRecorridos as string,",
+						"          EstadoViaje as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_COMMITTED',",
+						"     query: 'SELECT CONVERT(varchar(255), [AnioFuente]) AS [AnioFuente], CONVERT(varchar(255), [ViajeId]) AS [ViajeId], CONVERT(varchar(255), [RutaHistoricaId]) AS [RutaHistoricaId], CONVERT(varchar(255), [VehiculoId]) AS [VehiculoId], CONVERT(varchar(255), [FechaServicio], 23) AS [FechaServicio], CONVERT(varchar(255), [HoraProgramada], 8) AS [HoraProgramada], CONVERT(varchar(255), [HoraSalida], 8) AS [HoraSalida], CONVERT(varchar(255), [HoraLlegada], 8) AS [HoraLlegada], CONVERT(varchar(255), [ValidacionesTarjeta]) AS [ValidacionesTarjeta], CONVERT(varchar(255), [KmRecorridos]) AS [KmRecorridos], CONVERT(varchar(255), [EstadoViaje]) AS [EstadoViaje] FROM dbo.ViajesAzure',",
+						"     format: 'query') ~> OrigenSQL",
+						"OrigenCSV derive(b_AnioFuente = toString(year(coalesce(toDate(fec_servicio, 'dd/MM/yyyy'), toDate(substring(fec_servicio, 1, 10), 'yyyy-MM-dd')))),",
+						"          b_ViajeId = toString(id_viaje),",
+						"          b_RutaHistoricaId = toString(null()),",
+						"          b_VehiculoId = toString(nro_bus),",
+						"          b_FechaServicio = toString(fec_servicio),",
+						"          b_HoraProgramada = toString(hora_programada),",
+						"          b_HoraSalida = toString(hora_salida),",
+						"          b_HoraLlegada = toString(hora_llegada),",
+						"          b_ValidacionesTarjeta = toString(null()),",
+						"          b_KmRecorridos = toString(km_recorridos),",
+						"          b_EstadoViaje = toString(estado_viaje),",
+						"          b_CodigoRutaOrigen = toString(cod_ruta),",
+						"          b_PasajerosReportados = toString(pasajeros_reportados),",
+						"          b_PasajerosEstimados = toString(null()),",
+						"          b_TipoMetrica = toString(tipo_metrica),",
+						"          b_OrigenFuente = 'datos_csv/viajes.csv') ~> MapeoCSV",
+						"MapeoCSV select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ViajeId = b_ViajeId,",
+						"          RutaHistoricaId = b_RutaHistoricaId,",
+						"          VehiculoId = b_VehiculoId,",
+						"          FechaServicio = b_FechaServicio,",
+						"          HoraProgramada = b_HoraProgramada,",
+						"          HoraSalida = b_HoraSalida,",
+						"          HoraLlegada = b_HoraLlegada,",
+						"          ValidacionesTarjeta = b_ValidacionesTarjeta,",
+						"          KmRecorridos = b_KmRecorridos,",
+						"          EstadoViaje = b_EstadoViaje,",
+						"          CodigoRutaOrigen = b_CodigoRutaOrigen,",
+						"          PasajerosReportados = b_PasajerosReportados,",
+						"          PasajerosEstimados = b_PasajerosEstimados,",
+						"          TipoMetrica = b_TipoMetrica,",
+						"          OrigenFuente = b_OrigenFuente",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasCSV",
+						"OrigenExcel2022 derive(b_AnioFuente = '2022',",
+						"          b_ViajeId = toString(id_viaje),",
+						"          b_RutaHistoricaId = toString(null()),",
+						"          b_VehiculoId = toString(nro_bus),",
+						"          b_FechaServicio = toString(fecha_servicio),",
+						"          b_HoraProgramada = toString(hora_programada),",
+						"          b_HoraSalida = toString(hora_salida),",
+						"          b_HoraLlegada = toString(hora_llegada),",
+						"          b_ValidacionesTarjeta = toString(null()),",
+						"          b_KmRecorridos = toString(km_recorridos),",
+						"          b_EstadoViaje = toString(estado_viaje),",
+						"          b_CodigoRutaOrigen = toString(cod_ruta),",
+						"          b_PasajerosReportados = toString(null()),",
+						"          b_PasajerosEstimados = toString(pasajeros_estimados),",
+						"          b_TipoMetrica = toString(tipo_metrica),",
+						"          b_OrigenFuente = 'datos_xls/operacion_2022.xlsx:Viajes') ~> MapeoExcel2022",
+						"MapeoExcel2022 select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ViajeId = b_ViajeId,",
+						"          RutaHistoricaId = b_RutaHistoricaId,",
+						"          VehiculoId = b_VehiculoId,",
+						"          FechaServicio = b_FechaServicio,",
+						"          HoraProgramada = b_HoraProgramada,",
+						"          HoraSalida = b_HoraSalida,",
+						"          HoraLlegada = b_HoraLlegada,",
+						"          ValidacionesTarjeta = b_ValidacionesTarjeta,",
+						"          KmRecorridos = b_KmRecorridos,",
+						"          EstadoViaje = b_EstadoViaje,",
+						"          CodigoRutaOrigen = b_CodigoRutaOrigen,",
+						"          PasajerosReportados = b_PasajerosReportados,",
+						"          PasajerosEstimados = b_PasajerosEstimados,",
+						"          TipoMetrica = b_TipoMetrica,",
+						"          OrigenFuente = b_OrigenFuente",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasExcel2022",
+						"OrigenExcel2023 derive(b_AnioFuente = '2023',",
+						"          b_ViajeId = toString(id_viaje),",
+						"          b_RutaHistoricaId = toString(null()),",
+						"          b_VehiculoId = toString(nro_bus),",
+						"          b_FechaServicio = toString(fecha_servicio),",
+						"          b_HoraProgramada = toString(hora_programada),",
+						"          b_HoraSalida = toString(hora_salida),",
+						"          b_HoraLlegada = toString(hora_llegada),",
+						"          b_ValidacionesTarjeta = toString(null()),",
+						"          b_KmRecorridos = toString(km_recorridos),",
+						"          b_EstadoViaje = toString(estado_viaje),",
+						"          b_CodigoRutaOrigen = toString(cod_ruta),",
+						"          b_PasajerosReportados = toString(null()),",
+						"          b_PasajerosEstimados = toString(pasajeros_estimados),",
+						"          b_TipoMetrica = toString(tipo_metrica),",
+						"          b_OrigenFuente = 'datos_xls/operacion_2023.xlsx:Viajes') ~> MapeoExcel2023",
+						"MapeoExcel2023 select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ViajeId = b_ViajeId,",
+						"          RutaHistoricaId = b_RutaHistoricaId,",
+						"          VehiculoId = b_VehiculoId,",
+						"          FechaServicio = b_FechaServicio,",
+						"          HoraProgramada = b_HoraProgramada,",
+						"          HoraSalida = b_HoraSalida,",
+						"          HoraLlegada = b_HoraLlegada,",
+						"          ValidacionesTarjeta = b_ValidacionesTarjeta,",
+						"          KmRecorridos = b_KmRecorridos,",
+						"          EstadoViaje = b_EstadoViaje,",
+						"          CodigoRutaOrigen = b_CodigoRutaOrigen,",
+						"          PasajerosReportados = b_PasajerosReportados,",
+						"          PasajerosEstimados = b_PasajerosEstimados,",
+						"          TipoMetrica = b_TipoMetrica,",
+						"          OrigenFuente = b_OrigenFuente",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasExcel2023",
+						"OrigenSQL derive(b_AnioFuente = toString(AnioFuente),",
+						"          b_ViajeId = toString(ViajeId),",
+						"          b_RutaHistoricaId = toString(RutaHistoricaId),",
+						"          b_VehiculoId = toString(VehiculoId),",
+						"          b_FechaServicio = toString(FechaServicio),",
+						"          b_HoraProgramada = toString(HoraProgramada),",
+						"          b_HoraSalida = toString(HoraSalida),",
+						"          b_HoraLlegada = toString(HoraLlegada),",
+						"          b_ValidacionesTarjeta = toString(ValidacionesTarjeta),",
+						"          b_KmRecorridos = toString(KmRecorridos),",
+						"          b_EstadoViaje = toString(EstadoViaje),",
+						"          b_CodigoRutaOrigen = toString(null()),",
+						"          b_PasajerosReportados = toString(null()),",
+						"          b_PasajerosEstimados = toString(null()),",
+						"          b_TipoMetrica = 'VALIDACIONES_TARJETA',",
+						"          b_OrigenFuente = 'erp_transporte_db.dbo.ViajesAzure') ~> MapeoSQL",
+						"MapeoSQL select(mapColumn(",
+						"          AnioFuente = b_AnioFuente,",
+						"          ViajeId = b_ViajeId,",
+						"          RutaHistoricaId = b_RutaHistoricaId,",
+						"          VehiculoId = b_VehiculoId,",
+						"          FechaServicio = b_FechaServicio,",
+						"          HoraProgramada = b_HoraProgramada,",
+						"          HoraSalida = b_HoraSalida,",
+						"          HoraLlegada = b_HoraLlegada,",
+						"          ValidacionesTarjeta = b_ValidacionesTarjeta,",
+						"          KmRecorridos = b_KmRecorridos,",
+						"          EstadoViaje = b_EstadoViaje,",
+						"          CodigoRutaOrigen = b_CodigoRutaOrigen,",
+						"          PasajerosReportados = b_PasajerosReportados,",
+						"          PasajerosEstimados = b_PasajerosEstimados,",
+						"          TipoMetrica = b_TipoMetrica,",
+						"          OrigenFuente = b_OrigenFuente",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasSQL",
+						"ColumnasCSV, ColumnasExcel2022, ColumnasExcel2023, ColumnasSQL union(byName: true)~> UnirFuentes",
+						"UnirFuentes sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as string,",
+						"          ViajeId as string,",
+						"          RutaHistoricaId as string,",
+						"          VehiculoId as string,",
+						"          FechaServicio as string,",
+						"          HoraProgramada as string,",
+						"          HoraSalida as string,",
+						"          HoraLlegada as string,",
+						"          ValidacionesTarjeta as string,",
+						"          KmRecorridos as string,",
+						"          EstadoViaje as string,",
+						"          CodigoRutaOrigen as string,",
+						"          PasajerosReportados as string,",
+						"          PasajerosEstimados as string,",
+						"          TipoMetrica as string,",
+						"          OrigenFuente as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          ViajeId,",
+						"          RutaHistoricaId,",
+						"          VehiculoId,",
+						"          FechaServicio,",
+						"          HoraProgramada,",
+						"          HoraSalida,",
+						"          HoraLlegada,",
+						"          ValidacionesTarjeta,",
+						"          KmRecorridos,",
+						"          EstadoViaje,",
+						"          CodigoRutaOrigen,",
+						"          PasajerosReportados,",
+						"          PasajerosEstimados,",
+						"          TipoMetrica,",
+						"          OrigenFuente",
+						"     )) ~> DestinoBronze"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/bronze_viajes_csv')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_viajes_2022_xls')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_viajes_2023_xls')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_viajes_sql')]",
+				"[concat(variables('factoryId'), '/datasets/bronze_viajes_v2_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_silver_paradas_9887212')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Silver: convierte fechas ISO, dd/MM/yyyy y seriales Excel, normaliza, valida, separa observados y elimina solo duplicados exactos. Expande el catalogo CSV 2020-2021 por anio y conserva vigencias. Para archivos sin ID historico: codigo@yyyyMMdd; mantiene separadas las dos ubicaciones de MC-01 de 2023. IDs del ERP conservados.",
+				"folder": {
+					"name": "silver"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "bronze_paradas_dw",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenBronze"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "silver_paradas_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoSilver"
+						},
+						{
+							"dataset": {
+								"referenceName": "observados_paradas_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoObservados"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Normalizar"
+						},
+						{
+							"name": "Identificar"
+						},
+						{
+							"name": "Validar"
+						},
+						{
+							"name": "Clasificar"
+						},
+						{
+							"name": "ColumnasSilver"
+						},
+						{
+							"name": "QuitarDuplicadosExactos"
+						},
+						{
+							"name": "ExplicarObservacion"
+						},
+						{
+							"name": "ColumnasObservadas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          AnioFuente as string,",
+						"          ParadaHistoricaId as string,",
+						"          CodigoPublicado as string,",
+						"          NombreParada as string,",
+						"          Zona as string,",
+						"          Latitud as string,",
+						"          Longitud as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_COMMITTED',",
+						"     query: 'SELECT CONVERT(varchar(10), 2020) AS AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT CONVERT(varchar(10), 2021) AS AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE (AnioFuente <> \\'2020-2021\\' OR AnioFuente IS NULL)',",
+						"     format: 'query') ~> OrigenBronze",
+						"OrigenBronze derive(nAnio = toInteger(trim(AnioFuente)),",
+						"          nDesde = coalesce(toDate(substring(trim(VigenciaDesde), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaDesde), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaDesde)))),",
+						"          nHasta = coalesce(toDate(substring(trim(VigenciaHasta), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaHasta), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaHasta)))),",
+						"          nEstado = upper(trim(Estado)),",
+						"          nCodigo = upper(trim(CodigoPublicado)),",
+						"          nNombre = trim(NombreParada),",
+						"          nZona = trim(Zona),",
+						"          nLatitud = toDecimal(replace(trim(Latitud), ',', '.'), 9, 6),",
+						"          nLongitud = toDecimal(replace(trim(Longitud), ',', '.'), 9, 6)) ~> Normalizar",
+						"Normalizar derive(nId = iif(nAnio <= 2023, concat(nCodigo, '@', toString(nDesde, 'yyyyMMdd')), upper(trim(ParadaHistoricaId)))) ~> Identificar",
+						"Identificar derive(nValido = coalesce(!isNull(nLatitud) && !isNull(nLongitud) && nLatitud >= -90 && nLatitud <= 90 && nLongitud >= -180 && nLongitud <= 180 && !isNull(nAnio) && nAnio >= 2020 && nAnio <= 2025 && !isNull(nDesde) && !isNull(nHasta) && nDesde <= nHasta && year(nDesde) <= nAnio && year(nHasta) >= nAnio && !isNull(nId) && length(nId) > 0 && length(nId) <= 30 && !isNull(nCodigo) && length(nCodigo) > 0 && length(nCodigo) <= 20 && !isNull(nNombre) && length(nNombre) > 0 && length(nNombre) <= 120 && !isNull(nZona) && length(nZona) > 0 && length(nZona) <= 40 && !isNull(nEstado) && length(nEstado) > 0 && length(nEstado) <= 20, false())) ~> Validar",
+						"Validar split(nValido,",
+						"     disjoint: false) ~> Clasificar@(Validos, Observados)",
+						"Clasificar@Validos select(mapColumn(",
+						"          AnioFuente = nAnio,",
+						"          ParadaHistoricaId = nId,",
+						"          CodigoPublicado = nCodigo,",
+						"          NombreParada = nNombre,",
+						"          Zona = nZona,",
+						"          Latitud = nLatitud,",
+						"          Longitud = nLongitud,",
+						"          VigenciaDesde = nDesde,",
+						"          VigenciaHasta = nHasta,",
+						"          Estado = nEstado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasSilver",
+						"ColumnasSilver aggregate(groupBy(AnioFuente,",
+						"          ParadaHistoricaId,",
+						"          CodigoPublicado,",
+						"          NombreParada,",
+						"          Zona,",
+						"          Latitud,",
+						"          Longitud,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado),",
+						"     Repeticiones = count()) ~> QuitarDuplicadosExactos",
+						"Clasificar@Observados derive(Motivo = iif(isNull(nDesde) || isNull(nHasta), 'FECHA_INVALIDA', iif(year(nDesde) > nAnio || year(nHasta) < nAnio || nDesde > nHasta, 'FUERA_DE_VIGENCIA_O_INTERVALO_INVALIDO', 'CAMPO_REQUERIDO_TIPO_LONGITUD_O_RANGO_INVALIDO'))) ~> ExplicarObservacion",
+						"ExplicarObservacion select(mapColumn(",
+						"          AnioFuente,",
+						"          ParadaHistoricaId,",
+						"          CodigoPublicado,",
+						"          NombreParada,",
+						"          Zona,",
+						"          Latitud,",
+						"          Longitud,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado,",
+						"          Motivo",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasObservadas",
+						"QuitarDuplicadosExactos sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as integer,",
+						"          ParadaHistoricaId as string,",
+						"          CodigoPublicado as string,",
+						"          NombreParada as string,",
+						"          Zona as string,",
+						"          Latitud as decimal(9,6),",
+						"          Longitud as decimal(9,6),",
+						"          VigenciaDesde as date,",
+						"          VigenciaHasta as date,",
+						"          Estado as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          ParadaHistoricaId,",
+						"          CodigoPublicado,",
+						"          NombreParada,",
+						"          Zona,",
+						"          Latitud,",
+						"          Longitud,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado",
+						"     )) ~> DestinoSilver",
+						"ColumnasObservadas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as string,",
+						"          ParadaHistoricaId as string,",
+						"          CodigoPublicado as string,",
+						"          NombreParada as string,",
+						"          Zona as string,",
+						"          Latitud as string,",
+						"          Longitud as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string,",
+						"          Motivo as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          ParadaHistoricaId,",
+						"          CodigoPublicado,",
+						"          NombreParada,",
+						"          Zona,",
+						"          Latitud,",
+						"          Longitud,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado,",
+						"          Motivo",
+						"     )) ~> DestinoObservados"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/bronze_paradas_dw')]",
+				"[concat(variables('factoryId'), '/datasets/silver_paradas_dw')]",
+				"[concat(variables('factoryId'), '/datasets/observados_paradas_dw')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_silver_vehiculos_9887212')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Silver: convierte fechas ISO, dd/MM/yyyy y seriales Excel, normaliza, valida, separa observados y elimina solo duplicados exactos. Expande el catalogo CSV 2020-2021 por anio y conserva vigencias.",
+				"folder": {
+					"name": "silver"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "bronze_vehiculos_dw",
+								"type": "DatasetReference"
+							},
+							"name": "OrigenBronze"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "silver_vehiculos_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoSilver"
+						},
+						{
+							"dataset": {
+								"referenceName": "observados_vehiculos_dw",
+								"type": "DatasetReference"
+							},
+							"name": "DestinoObservados"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Normalizar"
+						},
+						{
+							"name": "Identificar"
+						},
+						{
+							"name": "Validar"
+						},
+						{
+							"name": "Clasificar"
+						},
+						{
+							"name": "ColumnasSilver"
+						},
+						{
+							"name": "QuitarDuplicadosExactos"
+						},
+						{
+							"name": "ExplicarObservacion"
+						},
+						{
+							"name": "ColumnasObservadas"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          AnioFuente as string,",
+						"          VehiculoId as string,",
+						"          Placa as string,",
+						"          TipoVehiculo as string,",
+						"          CapacidadEfectiva as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string",
+						"     ),",
+						"     allowSchemaDrift: false,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_COMMITTED',",
+						"     query: 'SELECT CONVERT(varchar(10), 2020) AS AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT CONVERT(varchar(10), 2021) AS AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE (AnioFuente <> \\'2020-2021\\' OR AnioFuente IS NULL)',",
+						"     format: 'query') ~> OrigenBronze",
+						"OrigenBronze derive(nAnio = toInteger(trim(AnioFuente)),",
+						"          nDesde = coalesce(toDate(substring(trim(VigenciaDesde), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaDesde), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaDesde)))),",
+						"          nHasta = coalesce(toDate(substring(trim(VigenciaHasta), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaHasta), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaHasta)))),",
+						"          nEstado = upper(trim(Estado)),",
+						"          nNumero = toInteger(replace(upper(trim(VehiculoId)), 'V-', '')),",
+						"          nPlaca = upper(trim(Placa)),",
+						"          nTipo = upper(trim(TipoVehiculo)),",
+						"          nCapacidad = toInteger(trim(CapacidadEfectiva))) ~> Normalizar",
+						"Normalizar derive(nId = iif(isNull(nNumero), toString(null()), concat('V-', lpad(toString(nNumero), 3, '0')))) ~> Identificar",
+						"Identificar derive(nValido = coalesce(!isNull(nCapacidad) && nCapacidad > 0 && nNumero > 0 && nNumero <= 999 && !isNull(nAnio) && nAnio >= 2020 && nAnio <= 2025 && !isNull(nDesde) && !isNull(nHasta) && nDesde <= nHasta && year(nDesde) <= nAnio && year(nHasta) >= nAnio && !isNull(nId) && length(nId) > 0 && length(nId) <= 20 && !isNull(nPlaca) && length(nPlaca) > 0 && length(nPlaca) <= 20 && !isNull(nTipo) && length(nTipo) > 0 && length(nTipo) <= 30 && !isNull(nEstado) && length(nEstado) > 0 && length(nEstado) <= 20, false())) ~> Validar",
+						"Validar split(nValido,",
+						"     disjoint: false) ~> Clasificar@(Validos, Observados)",
+						"Clasificar@Validos select(mapColumn(",
+						"          AnioFuente = nAnio,",
+						"          VehiculoId = nId,",
+						"          Placa = nPlaca,",
+						"          TipoVehiculo = nTipo,",
+						"          CapacidadEfectiva = nCapacidad,",
+						"          VigenciaDesde = nDesde,",
+						"          VigenciaHasta = nHasta,",
+						"          Estado = nEstado",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasSilver",
+						"ColumnasSilver aggregate(groupBy(AnioFuente,",
+						"          VehiculoId,",
+						"          Placa,",
+						"          TipoVehiculo,",
+						"          CapacidadEfectiva,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado),",
+						"     Repeticiones = count()) ~> QuitarDuplicadosExactos",
+						"Clasificar@Observados derive(Motivo = iif(isNull(nDesde) || isNull(nHasta), 'FECHA_INVALIDA', iif(year(nDesde) > nAnio || year(nHasta) < nAnio || nDesde > nHasta, 'FUERA_DE_VIGENCIA_O_INTERVALO_INVALIDO', 'CAMPO_REQUERIDO_TIPO_LONGITUD_O_RANGO_INVALIDO'))) ~> ExplicarObservacion",
+						"ExplicarObservacion select(mapColumn(",
+						"          AnioFuente,",
+						"          VehiculoId,",
+						"          Placa,",
+						"          TipoVehiculo,",
+						"          CapacidadEfectiva,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado,",
+						"          Motivo",
+						"     ),",
+						"     skipDuplicateMapInputs: false,",
+						"     skipDuplicateMapOutputs: true) ~> ColumnasObservadas",
+						"QuitarDuplicadosExactos sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as integer,",
+						"          VehiculoId as string,",
+						"          Placa as string,",
+						"          TipoVehiculo as string,",
+						"          CapacidadEfectiva as integer,",
+						"          VigenciaDesde as date,",
+						"          VigenciaHasta as date,",
+						"          Estado as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          VehiculoId,",
+						"          Placa,",
+						"          TipoVehiculo,",
+						"          CapacidadEfectiva,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado",
+						"     )) ~> DestinoSilver",
+						"ColumnasObservadas sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AnioFuente as string,",
+						"          VehiculoId as string,",
+						"          Placa as string,",
+						"          TipoVehiculo as string,",
+						"          CapacidadEfectiva as string,",
+						"          VigenciaDesde as string,",
+						"          VigenciaHasta as string,",
+						"          Estado as string,",
+						"          Motivo as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AnioFuente,",
+						"          VehiculoId,",
+						"          Placa,",
+						"          TipoVehiculo,",
+						"          CapacidadEfectiva,",
+						"          VigenciaDesde,",
+						"          VigenciaHasta,",
+						"          Estado,",
+						"          Motivo",
+						"     )) ~> DestinoObservados"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/bronze_vehiculos_dw')]",
+				"[concat(variables('factoryId'), '/datasets/silver_vehiculos_dw')]",
+				"[concat(variables('factoryId'), '/datasets/observados_vehiculos_dw')]"
+			]
 		}
 	]
 }

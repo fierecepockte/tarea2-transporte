@@ -871,7 +871,48 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "varchar"
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "varchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "varchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "varchar"
+					},
+					{
+						"name": "Zona",
+						"type": "varchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "varchar"
+					},
+					{
+						"name": "Longitud",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "varchar"
+					},
+					{
+						"name": "Estado",
+						"type": "varchar"
+					}
+				],
 				"typeProperties": {
 					"schema": "bronze",
 					"table": "ParadasAzure"
@@ -895,7 +936,53 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zona",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "Longitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "date"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "date"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					}
+				],
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "ParadasAzure"

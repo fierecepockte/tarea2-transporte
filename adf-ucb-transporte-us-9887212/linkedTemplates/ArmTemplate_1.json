@@ -410,7 +410,40 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "varchar"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "varchar"
+					},
+					{
+						"name": "Placa",
+						"type": "varchar"
+					},
+					{
+						"name": "TipoVehiculo",
+						"type": "varchar"
+					},
+					{
+						"name": "CapacidadEfectiva",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "varchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "varchar"
+					},
+					{
+						"name": "Estado",
+						"type": "varchar"
+					}
+				],
 				"typeProperties": {
 					"schema": "bronze",
 					"table": "VehiculosAzure"
@@ -698,6 +731,351 @@
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "ViajesAzure"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/bronze_viajes_v2_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "varchar"
+					},
+					{
+						"name": "ViajeId",
+						"type": "varchar"
+					},
+					{
+						"name": "RutaHistoricaId",
+						"type": "varchar"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "varchar"
+					},
+					{
+						"name": "FechaServicio",
+						"type": "varchar"
+					},
+					{
+						"name": "HoraProgramada",
+						"type": "varchar"
+					},
+					{
+						"name": "HoraSalida",
+						"type": "varchar"
+					},
+					{
+						"name": "HoraLlegada",
+						"type": "varchar"
+					},
+					{
+						"name": "ValidacionesTarjeta",
+						"type": "varchar"
+					},
+					{
+						"name": "KmRecorridos",
+						"type": "varchar"
+					},
+					{
+						"name": "EstadoViaje",
+						"type": "varchar"
+					},
+					{
+						"name": "CodigoRutaOrigen",
+						"type": "varchar"
+					},
+					{
+						"name": "PasajerosReportados",
+						"type": "varchar"
+					},
+					{
+						"name": "PasajerosEstimados",
+						"type": "varchar"
+					},
+					{
+						"name": "TipoMetrica",
+						"type": "varchar"
+					},
+					{
+						"name": "OrigenFuente",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "bronze",
+					"table": "ViajesAzure"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/observados_paradas_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "auditoria/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zona",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Longitud",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Motivo",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "auditoria",
+					"table": "ParadasObservadas"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/observados_vehiculos_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "auditoria/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Placa",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TipoVehiculo",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CapacidadEfectiva",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "nvarchar"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Motivo",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "auditoria",
+					"table": "VehiculosObservados"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_paradas_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "smallint"
+					},
+					{
+						"name": "ParadaHistoricaId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CodigoPublicado",
+						"type": "nvarchar"
+					},
+					{
+						"name": "NombreParada",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zona",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Latitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "Longitud",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 6
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "date"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "date"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "ParadasAzure"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_vehiculos_dw')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sql_dw_transporte",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver/automatico"
+				},
+				"annotations": [
+					"tarea2-9887212-flujos-v2"
+				],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AnioFuente",
+						"type": "smallint"
+					},
+					{
+						"name": "VehiculoId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Placa",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TipoVehiculo",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CapacidadEfectiva",
+						"type": "int"
+					},
+					{
+						"name": "VigenciaDesde",
+						"type": "date"
+					},
+					{
+						"name": "VigenciaHasta",
+						"type": "date"
+					},
+					{
+						"name": "Estado",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "VehiculosAzure"
 				}
 			},
 			"dependsOn": []
