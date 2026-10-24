@@ -59,7 +59,7 @@
 				"derivedColumn1 derive(Latitud = toDecimal(trim(Latitud)),",
 				"          Longitud = toDecimal(trim(Longitud))) ~> derivedColumn2",
 				"derivedColumn2 derive(VigenciaDesde = iif(instr(VigenciaDesde, '/')>0, toDate(VigenciaDesde, 'dd/MM/yyyy'), toDate(VigenciaDesde,'yyyy-MM-dd')),",
-				"          column1 = iif(instr(VigenciaHasta, '/')>0, toDate(VigenciaHasta, 'dd/MM/yyyy'), toDate(VigenciaHasta,'yyyy-MM-dd'))) ~> derivedColumn3",
+				"          VigenciaHasta = iif(instr(VigenciaHasta, '/')>0, toDate(VigenciaHasta, 'dd/MM/yyyy'), toDate(VigenciaHasta,'yyyy-MM-dd'))) ~> derivedColumn3",
 				"derivedColumn3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
