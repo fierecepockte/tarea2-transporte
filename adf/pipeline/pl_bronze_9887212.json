@@ -1,109 +1,89 @@
 {
-    "name":  "pl_bronze_9887212",
-    "properties":  {
-                       "description":  "Tarea 2 - bronze - generado para los videos 4.11 y 5.5. Reutiliza los Mapping Data Flows existentes.",
-                       "activities":  [
-                                          {
-                                              "name":  "CargarParadas",
-                                              "type":  "ExecuteDataFlow",
-                                              "dependsOn":  [
-
-                                                            ],
-                                              "policy":  {
-                                                             "retryIntervalInSeconds":  30,
-                                                             "secureInput":  false,
-                                                             "retry":  0,
-                                                             "timeout":  "01:00:00",
-                                                             "secureOutput":  false
-                                                         },
-                                              "userProperties":  [
-
-                                                                 ],
-                                              "typeProperties":  {
-                                                                     "dataflow":  {
-                                                                                      "referenceName":  "df_bronze_paradas_9887212",
-                                                                                      "type":  "DataFlowReference"
-                                                                                  },
-                                                                     "traceLevel":  "Coarse",
-                                                                     "compute":  {
-                                                                                     "coreCount":  8,
-                                                                                     "computeType":  "General"
-                                                                                 }
-                                                                 }
-                                          },
-                                          {
-                                              "name":  "CargarVehiculos",
-                                              "type":  "ExecuteDataFlow",
-                                              "dependsOn":  [
-                                                                {
-                                                                    "activity":  "CargarParadas",
-                                                                    "dependencyConditions":  [
-                                                                                                 "Succeeded"
-                                                                                             ]
-                                                                }
-                                                            ],
-                                              "policy":  {
-                                                             "retryIntervalInSeconds":  30,
-                                                             "secureInput":  false,
-                                                             "retry":  0,
-                                                             "timeout":  "01:00:00",
-                                                             "secureOutput":  false
-                                                         },
-                                              "userProperties":  [
-
-                                                                 ],
-                                              "typeProperties":  {
-                                                                     "dataflow":  {
-                                                                                      "referenceName":  "df_bronze_vehiculos_9887212",
-                                                                                      "type":  "DataFlowReference"
-                                                                                  },
-                                                                     "traceLevel":  "Coarse",
-                                                                     "compute":  {
-                                                                                     "coreCount":  8,
-                                                                                     "computeType":  "General"
-                                                                                 }
-                                                                 }
-                                          },
-                                          {
-                                              "name":  "CargarViajes",
-                                              "type":  "ExecuteDataFlow",
-                                              "dependsOn":  [
-                                                                {
-                                                                    "activity":  "CargarVehiculos",
-                                                                    "dependencyConditions":  [
-                                                                                                 "Succeeded"
-                                                                                             ]
-                                                                }
-                                                            ],
-                                              "policy":  {
-                                                             "retryIntervalInSeconds":  30,
-                                                             "secureInput":  false,
-                                                             "retry":  0,
-                                                             "timeout":  "01:00:00",
-                                                             "secureOutput":  false
-                                                         },
-                                              "userProperties":  [
-
-                                                                 ],
-                                              "typeProperties":  {
-                                                                     "dataflow":  {
-                                                                                      "referenceName":  "df_bronze_viajes_9887212",
-                                                                                      "type":  "DataFlowReference"
-                                                                                  },
-                                                                     "traceLevel":  "Coarse",
-                                                                     "compute":  {
-                                                                                     "coreCount":  8,
-                                                                                     "computeType":  "General"
-                                                                                 }
-                                                                 }
-                                          }
-                                      ],
-                       "concurrency":  1,
-                       "folder":  {
-                                      "name":  "bronze"
-                                  },
-                       "annotations":  [
-                                           "tarea2-9887212-videos-411-51-55-v1"
-                                       ]
-                   }
+	"name": "pl_bronze_9887212",
+	"properties": {
+		"description": "Tarea 2 - bronze - generado para los videos 4.11 y 5.5. Reutiliza los Mapping Data Flows existentes.",
+		"activities": [
+			{
+				"name": "CargarParadas",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Coarse"
+				}
+			},
+			{
+				"name": "CargarVehiculos",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "CargarParadas",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Coarse"
+				}
+			},
+			{
+				"name": "CargarViajes",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "CargarVehiculos",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Coarse"
+				}
+			}
+		],
+		"concurrency": 1,
+		"folder": {
+			"name": "bronze"
+		},
+		"annotations": [
+			"tarea2-9887212-videos-411-51-55-v1"
+		]
+	}
 }
