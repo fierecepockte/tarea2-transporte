@@ -1,118 +1,189 @@
 {
-    "properties":  {
-                       "description":  "Silver: convierte fechas ISO, dd/MM/yyyy y seriales Excel, normaliza, valida, separa observados y elimina solo duplicados exactos. Expande el catalogo CSV 2020-2021 por anio y conserva vigencias.",
-                       "folder":  {
-                                      "name":  "silver"
-                                  },
-                       "annotations":  [
-                                           "tarea2-9887212-flujos-v2"
-                                       ],
-                       "type":  "MappingDataFlow",
-                       "typeProperties":  {
-                                              "sources":  [
-                                                              {
-                                                                  "name":  "OrigenBronze",
-                                                                  "dataset":  {
-                                                                                  "referenceName":  "bronze_vehiculos_dw",
-                                                                                  "type":  "DatasetReference"
-                                                                              }
-                                                              }
-                                                          ],
-                                              "sinks":  [
-                                                            {
-                                                                "name":  "DestinoSilver",
-                                                                "dataset":  {
-                                                                                "referenceName":  "silver_vehiculos_dw",
-                                                                                "type":  "DatasetReference"
-                                                                            }
-                                                            },
-                                                            {
-                                                                "name":  "DestinoObservados",
-                                                                "dataset":  {
-                                                                                "referenceName":  "observados_vehiculos_dw",
-                                                                                "type":  "DatasetReference"
-                                                                            }
-                                                            }
-                                                        ],
-                                              "transformations":  [
-                                                                      {
-                                                                          "name":  "Normalizar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "Identificar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "Validar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "Clasificar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "ColumnasSilver"
-                                                                      },
-                                                                      {
-                                                                          "name":  "QuitarDuplicadosExactos"
-                                                                      },
-                                                                      {
-                                                                          "name":  "ExplicarObservacion"
-                                                                      },
-                                                                      {
-                                                                          "name":  "ColumnasObservadas"
-                                                                      }
-                                                                  ],
-                                              "scriptLines":  [
-                                                                  "source(output(AnioFuente as string, VehiculoId as string, Placa as string, TipoVehiculo as string, CapacidadEfectiva as string, VigenciaDesde as string, VigenciaHasta as string, Estado as string),",
-                                                                  "    allowSchemaDrift: false,",
-                                                                  "    validateSchema: false,",
-                                                                  "    isolationLevel: \u0027READ_COMMITTED\u0027,",
-                                                                  "    query: \u0027SELECT CONVERT(varchar(10), 2020) AS AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE AnioFuente = \\\u00272020-2021\\\u0027 UNION ALL SELECT CONVERT(varchar(10), 2021) AS AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE AnioFuente = \\\u00272020-2021\\\u0027 UNION ALL SELECT AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE (AnioFuente \u003c\u003e \\\u00272020-2021\\\u0027 OR AnioFuente IS NULL)\u0027,",
-                                                                  "    format: \u0027query\u0027) ~\u003e OrigenBronze",
-                                                                  "OrigenBronze derive(nAnio = toInteger(trim(AnioFuente)),",
-                                                                  "    nDesde = coalesce(toDate(substring(trim(VigenciaDesde), 1, 10), \u0027yyyy-MM-dd\u0027), toDate(trim(VigenciaDesde), \u0027dd/MM/yyyy\u0027), addDays(toDate(\u00271899-12-30\u0027), toInteger(toDouble(VigenciaDesde)))),",
-                                                                  "    nHasta = coalesce(toDate(substring(trim(VigenciaHasta), 1, 10), \u0027yyyy-MM-dd\u0027), toDate(trim(VigenciaHasta), \u0027dd/MM/yyyy\u0027), addDays(toDate(\u00271899-12-30\u0027), toInteger(toDouble(VigenciaHasta)))),",
-                                                                  "    nEstado = upper(trim(Estado)),",
-                                                                  "    nNumero = toInteger(replace(upper(trim(VehiculoId)), \u0027V-\u0027, \u0027\u0027)),",
-                                                                  "    nPlaca = upper(trim(Placa)),",
-                                                                  "    nTipo = upper(trim(TipoVehiculo)),",
-                                                                  "    nCapacidad = toInteger(trim(CapacidadEfectiva))) ~\u003e Normalizar",
-                                                                  "Normalizar derive(nId = iif(isNull(nNumero), toString(null()), concat(\u0027V-\u0027, lpad(toString(nNumero), 3, \u00270\u0027)))) ~\u003e Identificar",
-                                                                  "Identificar derive(nValido = coalesce(!isNull(nCapacidad) \u0026\u0026 nCapacidad \u003e 0 \u0026\u0026 nNumero \u003e 0 \u0026\u0026 nNumero \u003c= 999 \u0026\u0026 !isNull(nAnio) \u0026\u0026 nAnio \u003e= 2020 \u0026\u0026 nAnio \u003c= 2025 \u0026\u0026 !isNull(nDesde) \u0026\u0026 !isNull(nHasta) \u0026\u0026 nDesde \u003c= nHasta \u0026\u0026 year(nDesde) \u003c= nAnio \u0026\u0026 year(nHasta) \u003e= nAnio \u0026\u0026 !isNull(nId) \u0026\u0026 length(nId) \u003e 0 \u0026\u0026 length(nId) \u003c= 20 \u0026\u0026 !isNull(nPlaca) \u0026\u0026 length(nPlaca) \u003e 0 \u0026\u0026 length(nPlaca) \u003c= 20 \u0026\u0026 !isNull(nTipo) \u0026\u0026 length(nTipo) \u003e 0 \u0026\u0026 length(nTipo) \u003c= 30 \u0026\u0026 !isNull(nEstado) \u0026\u0026 length(nEstado) \u003e 0 \u0026\u0026 length(nEstado) \u003c= 20, false())) ~\u003e Validar",
-                                                                  "Validar split(nValido, disjoint: false) ~\u003e Clasificar@(Validos, Observados)",
-                                                                  "Clasificar@Validos select(mapColumn(AnioFuente = nAnio,",
-                                                                  "    VehiculoId = nId,",
-                                                                  "    Placa = nPlaca,",
-                                                                  "    TipoVehiculo = nTipo,",
-                                                                  "    CapacidadEfectiva = nCapacidad,",
-                                                                  "    VigenciaDesde = nDesde,",
-                                                                  "    VigenciaHasta = nHasta,",
-                                                                  "    Estado = nEstado),",
-                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasSilver",
-                                                                  "ColumnasSilver aggregate(groupBy(AnioFuente, VehiculoId, Placa, TipoVehiculo, CapacidadEfectiva, VigenciaDesde, VigenciaHasta, Estado), Repeticiones = count()) ~\u003e QuitarDuplicadosExactos",
-                                                                  "QuitarDuplicadosExactos sink(input(AnioFuente as short, VehiculoId as string, Placa as string, TipoVehiculo as string, CapacidadEfectiva as integer, VigenciaDesde as date, VigenciaHasta as date, Estado as string),",
-                                                                  "    allowSchemaDrift: true, validateSchema: false,",
-                                                                  "    deletable: false, insertable: true, updateable: false, upsertable: false,",
-                                                                  "    format: \u0027table\u0027, skipDuplicateMapInputs: true, skipDuplicateMapOutputs: true,",
-                                                                  "    errorHandlingOption: \u0027stopOnFirstError\u0027,",
-                                                                  "    mapColumn(AnioFuente, VehiculoId, Placa, TipoVehiculo, CapacidadEfectiva, VigenciaDesde, VigenciaHasta, Estado)) ~\u003e DestinoSilver",
-                                                                  "Clasificar@Observados derive(Motivo = iif(isNull(nDesde) || isNull(nHasta), \u0027FECHA_INVALIDA\u0027, iif(year(nDesde) \u003e nAnio || year(nHasta) \u003c nAnio || nDesde \u003e nHasta, \u0027FUERA_DE_VIGENCIA_O_INTERVALO_INVALIDO\u0027, \u0027CAMPO_REQUERIDO_TIPO_LONGITUD_O_RANGO_INVALIDO\u0027))) ~\u003e ExplicarObservacion",
-                                                                  "ExplicarObservacion select(mapColumn(AnioFuente,",
-                                                                  "    VehiculoId,",
-                                                                  "    Placa,",
-                                                                  "    TipoVehiculo,",
-                                                                  "    CapacidadEfectiva,",
-                                                                  "    VigenciaDesde,",
-                                                                  "    VigenciaHasta,",
-                                                                  "    Estado,",
-                                                                  "    Motivo),",
-                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasObservadas",
-                                                                  "ColumnasObservadas sink(input(AnioFuente as string, VehiculoId as string, Placa as string, TipoVehiculo as string, CapacidadEfectiva as string, VigenciaDesde as string, VigenciaHasta as string, Estado as string, Motivo as string),",
-                                                                  "    allowSchemaDrift: true, validateSchema: false,",
-                                                                  "    deletable: false, insertable: true, updateable: false, upsertable: false,",
-                                                                  "    format: \u0027table\u0027, skipDuplicateMapInputs: true, skipDuplicateMapOutputs: true,",
-                                                                  "    errorHandlingOption: \u0027stopOnFirstError\u0027,",
-                                                                  "    mapColumn(AnioFuente, VehiculoId, Placa, TipoVehiculo, CapacidadEfectiva, VigenciaDesde, VigenciaHasta, Estado, Motivo)) ~\u003e DestinoObservados"
-                                                              ]
-                                          }
-                   },
-    "name":  "df_silver_vehiculos_9887212"
+	"name": "df_silver_vehiculos_9887212",
+	"properties": {
+		"description": "Silver: convierte fechas ISO, dd/MM/yyyy y seriales Excel, normaliza, valida, separa observados y elimina solo duplicados exactos. Expande el catalogo CSV 2020-2021 por anio y conserva vigencias.",
+		"folder": {
+			"name": "silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "bronze_vehiculos_dw",
+						"type": "DatasetReference"
+					},
+					"name": "OrigenBronze"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dw_silver_vehiculos_sql",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoSilver"
+				},
+				{
+					"dataset": {
+						"referenceName": "observados_vehiculos_dw",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoObservados"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Normalizar"
+				},
+				{
+					"name": "Identificar"
+				},
+				{
+					"name": "Validar"
+				},
+				{
+					"name": "Clasificar"
+				},
+				{
+					"name": "ColumnasSilver"
+				},
+				{
+					"name": "QuitarDuplicadosExactos"
+				},
+				{
+					"name": "ExplicarObservacion"
+				},
+				{
+					"name": "ColumnasObservadas"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AnioFuente as string,",
+				"          VehiculoId as string,",
+				"          Placa as string,",
+				"          TipoVehiculo as string,",
+				"          CapacidadEfectiva as string,",
+				"          VigenciaDesde as string,",
+				"          VigenciaHasta as string,",
+				"          Estado as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_COMMITTED',",
+				"     query: 'SELECT CONVERT(varchar(10), 2020) AS AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT CONVERT(varchar(10), 2021) AS AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT AnioFuente, [VehiculoId], [Placa], [TipoVehiculo], [CapacidadEfectiva], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.VehiculosAzure WHERE (AnioFuente <> \\'2020-2021\\' OR AnioFuente IS NULL)',",
+				"     format: 'query') ~> OrigenBronze",
+				"OrigenBronze derive(nAnio = toInteger(trim(AnioFuente)),",
+				"          nDesde = coalesce(toDate(substring(trim(VigenciaDesde), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaDesde), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaDesde)))),",
+				"          nHasta = coalesce(toDate(substring(trim(VigenciaHasta), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaHasta), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaHasta)))),",
+				"          nEstado = upper(trim(Estado)),",
+				"          nNumero = toInteger(replace(upper(trim(VehiculoId)), 'V-', '')),",
+				"          nPlaca = upper(trim(Placa)),",
+				"          nTipo = upper(trim(TipoVehiculo)),",
+				"          nCapacidad = toInteger(trim(CapacidadEfectiva))) ~> Normalizar",
+				"Normalizar derive(nId = iif(isNull(nNumero), toString(null()), concat('V-', lpad(toString(nNumero), 3, '0')))) ~> Identificar",
+				"Identificar derive(nValido = coalesce(!isNull(nCapacidad) && nCapacidad > 0 && nNumero > 0 && nNumero <= 999 && !isNull(nAnio) && nAnio >= 2020 && nAnio <= 2025 && !isNull(nDesde) && !isNull(nHasta) && nDesde <= nHasta && year(nDesde) <= nAnio && year(nHasta) >= nAnio && !isNull(nId) && length(nId) > 0 && length(nId) <= 20 && !isNull(nPlaca) && length(nPlaca) > 0 && length(nPlaca) <= 20 && !isNull(nTipo) && length(nTipo) > 0 && length(nTipo) <= 30 && !isNull(nEstado) && length(nEstado) > 0 && length(nEstado) <= 20, false())) ~> Validar",
+				"Validar split(nValido,",
+				"     disjoint: false) ~> Clasificar@(Validos, Observados)",
+				"Clasificar@Validos select(mapColumn(",
+				"          AnioFuente = nAnio,",
+				"          VehiculoId = nId,",
+				"          Placa = nPlaca,",
+				"          TipoVehiculo = nTipo,",
+				"          CapacidadEfectiva = nCapacidad,",
+				"          VigenciaDesde = nDesde,",
+				"          VigenciaHasta = nHasta,",
+				"          Estado = nEstado",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: true) ~> ColumnasSilver",
+				"ColumnasSilver aggregate(groupBy(AnioFuente,",
+				"          VehiculoId,",
+				"          Placa,",
+				"          TipoVehiculo,",
+				"          CapacidadEfectiva,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado),",
+				"     Repeticiones = count()) ~> QuitarDuplicadosExactos",
+				"Clasificar@Observados derive(Motivo = iif(isNull(nDesde) || isNull(nHasta), 'FECHA_INVALIDA', iif(year(nDesde) > nAnio || year(nHasta) < nAnio || nDesde > nHasta, 'FUERA_DE_VIGENCIA_O_INTERVALO_INVALIDO', 'CAMPO_REQUERIDO_TIPO_LONGITUD_O_RANGO_INVALIDO'))) ~> ExplicarObservacion",
+				"ExplicarObservacion select(mapColumn(",
+				"          AnioFuente,",
+				"          VehiculoId,",
+				"          Placa,",
+				"          TipoVehiculo,",
+				"          CapacidadEfectiva,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado,",
+				"          Motivo",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: true) ~> ColumnasObservadas",
+				"QuitarDuplicadosExactos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AnioFuente as integer,",
+				"          VehiculoId as string,",
+				"          Placa as string,",
+				"          TipoVehiculo as string,",
+				"          CapacidadEfectiva as integer,",
+				"          VigenciaDesde as date,",
+				"          VigenciaHasta as date,",
+				"          Estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          AnioFuente,",
+				"          VehiculoId,",
+				"          Placa,",
+				"          TipoVehiculo,",
+				"          CapacidadEfectiva,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado",
+				"     )) ~> DestinoSilver",
+				"ColumnasObservadas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AnioFuente as string,",
+				"          VehiculoId as string,",
+				"          Placa as string,",
+				"          TipoVehiculo as string,",
+				"          CapacidadEfectiva as string,",
+				"          VigenciaDesde as string,",
+				"          VigenciaHasta as string,",
+				"          Estado as string,",
+				"          Motivo as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          AnioFuente,",
+				"          VehiculoId,",
+				"          Placa,",
+				"          TipoVehiculo,",
+				"          CapacidadEfectiva,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado,",
+				"          Motivo",
+				"     )) ~> DestinoObservados"
+			]
+		}
+	}
 }

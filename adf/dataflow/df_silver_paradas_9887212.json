@@ -1,123 +1,206 @@
 {
-    "properties":  {
-                       "description":  "Silver: convierte fechas ISO, dd/MM/yyyy y seriales Excel, normaliza, valida, separa observados y elimina solo duplicados exactos. Expande el catalogo CSV 2020-2021 por anio y conserva vigencias. Para archivos sin ID historico: codigo@yyyyMMdd; mantiene separadas las dos ubicaciones de MC-01 de 2023. IDs del ERP conservados.",
-                       "folder":  {
-                                      "name":  "silver"
-                                  },
-                       "annotations":  [
-                                           "tarea2-9887212-flujos-v2"
-                                       ],
-                       "type":  "MappingDataFlow",
-                       "typeProperties":  {
-                                              "sources":  [
-                                                              {
-                                                                  "name":  "OrigenBronze",
-                                                                  "dataset":  {
-                                                                                  "referenceName":  "bronze_paradas_dw",
-                                                                                  "type":  "DatasetReference"
-                                                                              }
-                                                              }
-                                                          ],
-                                              "sinks":  [
-                                                            {
-                                                                "name":  "DestinoSilver",
-                                                                "dataset":  {
-                                                                                "referenceName":  "silver_paradas_dw",
-                                                                                "type":  "DatasetReference"
-                                                                            }
-                                                            },
-                                                            {
-                                                                "name":  "DestinoObservados",
-                                                                "dataset":  {
-                                                                                "referenceName":  "observados_paradas_dw",
-                                                                                "type":  "DatasetReference"
-                                                                            }
-                                                            }
-                                                        ],
-                                              "transformations":  [
-                                                                      {
-                                                                          "name":  "Normalizar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "Identificar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "Validar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "Clasificar"
-                                                                      },
-                                                                      {
-                                                                          "name":  "ColumnasSilver"
-                                                                      },
-                                                                      {
-                                                                          "name":  "QuitarDuplicadosExactos"
-                                                                      },
-                                                                      {
-                                                                          "name":  "ExplicarObservacion"
-                                                                      },
-                                                                      {
-                                                                          "name":  "ColumnasObservadas"
-                                                                      }
-                                                                  ],
-                                              "scriptLines":  [
-                                                                  "source(output(AnioFuente as string, ParadaHistoricaId as string, CodigoPublicado as string, NombreParada as string, Zona as string, Latitud as string, Longitud as string, VigenciaDesde as string, VigenciaHasta as string, Estado as string),",
-                                                                  "    allowSchemaDrift: false,",
-                                                                  "    validateSchema: false,",
-                                                                  "    isolationLevel: \u0027READ_COMMITTED\u0027,",
-                                                                  "    query: \u0027SELECT CONVERT(varchar(10), 2020) AS AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE AnioFuente = \\\u00272020-2021\\\u0027 UNION ALL SELECT CONVERT(varchar(10), 2021) AS AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE AnioFuente = \\\u00272020-2021\\\u0027 UNION ALL SELECT AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE (AnioFuente \u003c\u003e \\\u00272020-2021\\\u0027 OR AnioFuente IS NULL)\u0027,",
-                                                                  "    format: \u0027query\u0027) ~\u003e OrigenBronze",
-                                                                  "OrigenBronze derive(nAnio = toInteger(trim(AnioFuente)),",
-                                                                  "    nDesde = coalesce(toDate(substring(trim(VigenciaDesde), 1, 10), \u0027yyyy-MM-dd\u0027), toDate(trim(VigenciaDesde), \u0027dd/MM/yyyy\u0027), addDays(toDate(\u00271899-12-30\u0027), toInteger(toDouble(VigenciaDesde)))),",
-                                                                  "    nHasta = coalesce(toDate(substring(trim(VigenciaHasta), 1, 10), \u0027yyyy-MM-dd\u0027), toDate(trim(VigenciaHasta), \u0027dd/MM/yyyy\u0027), addDays(toDate(\u00271899-12-30\u0027), toInteger(toDouble(VigenciaHasta)))),",
-                                                                  "    nEstado = upper(trim(Estado)),",
-                                                                  "    nCodigo = upper(trim(CodigoPublicado)),",
-                                                                  "    nNombre = trim(NombreParada),",
-                                                                  "    nZona = trim(Zona),",
-                                                                  "    nLatitud = toDecimal(replace(trim(Latitud), \u0027,\u0027, \u0027.\u0027), 9, 6),",
-                                                                  "    nLongitud = toDecimal(replace(trim(Longitud), \u0027,\u0027, \u0027.\u0027), 9, 6)) ~\u003e Normalizar",
-                                                                  "Normalizar derive(nId = iif(nAnio \u003c= 2023, concat(nCodigo, \u0027@\u0027, toString(nDesde, \u0027yyyyMMdd\u0027)), upper(trim(ParadaHistoricaId)))) ~\u003e Identificar",
-                                                                  "Identificar derive(nValido = coalesce(!isNull(nLatitud) \u0026\u0026 !isNull(nLongitud) \u0026\u0026 nLatitud \u003e= -90 \u0026\u0026 nLatitud \u003c= 90 \u0026\u0026 nLongitud \u003e= -180 \u0026\u0026 nLongitud \u003c= 180 \u0026\u0026 !isNull(nAnio) \u0026\u0026 nAnio \u003e= 2020 \u0026\u0026 nAnio \u003c= 2025 \u0026\u0026 !isNull(nDesde) \u0026\u0026 !isNull(nHasta) \u0026\u0026 nDesde \u003c= nHasta \u0026\u0026 year(nDesde) \u003c= nAnio \u0026\u0026 year(nHasta) \u003e= nAnio \u0026\u0026 !isNull(nId) \u0026\u0026 length(nId) \u003e 0 \u0026\u0026 length(nId) \u003c= 30 \u0026\u0026 !isNull(nCodigo) \u0026\u0026 length(nCodigo) \u003e 0 \u0026\u0026 length(nCodigo) \u003c= 20 \u0026\u0026 !isNull(nNombre) \u0026\u0026 length(nNombre) \u003e 0 \u0026\u0026 length(nNombre) \u003c= 120 \u0026\u0026 !isNull(nZona) \u0026\u0026 length(nZona) \u003e 0 \u0026\u0026 length(nZona) \u003c= 40 \u0026\u0026 !isNull(nEstado) \u0026\u0026 length(nEstado) \u003e 0 \u0026\u0026 length(nEstado) \u003c= 20, false())) ~\u003e Validar",
-                                                                  "Validar split(nValido, disjoint: false) ~\u003e Clasificar@(Validos, Observados)",
-                                                                  "Clasificar@Validos select(mapColumn(AnioFuente = nAnio,",
-                                                                  "    ParadaHistoricaId = nId,",
-                                                                  "    CodigoPublicado = nCodigo,",
-                                                                  "    NombreParada = nNombre,",
-                                                                  "    Zona = nZona,",
-                                                                  "    Latitud = nLatitud,",
-                                                                  "    Longitud = nLongitud,",
-                                                                  "    VigenciaDesde = nDesde,",
-                                                                  "    VigenciaHasta = nHasta,",
-                                                                  "    Estado = nEstado),",
-                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasSilver",
-                                                                  "ColumnasSilver aggregate(groupBy(AnioFuente, ParadaHistoricaId, CodigoPublicado, NombreParada, Zona, Latitud, Longitud, VigenciaDesde, VigenciaHasta, Estado), Repeticiones = count()) ~\u003e QuitarDuplicadosExactos",
-                                                                  "QuitarDuplicadosExactos sink(input(AnioFuente as short, ParadaHistoricaId as string, CodigoPublicado as string, NombreParada as string, Zona as string, Latitud as decimal(9,6), Longitud as decimal(9,6), VigenciaDesde as date, VigenciaHasta as date, Estado as string),",
-                                                                  "    allowSchemaDrift: true, validateSchema: false,",
-                                                                  "    deletable: false, insertable: true, updateable: false, upsertable: false,",
-                                                                  "    format: \u0027table\u0027, skipDuplicateMapInputs: true, skipDuplicateMapOutputs: true,",
-                                                                  "    errorHandlingOption: \u0027stopOnFirstError\u0027,",
-                                                                  "    mapColumn(AnioFuente, ParadaHistoricaId, CodigoPublicado, NombreParada, Zona, Latitud, Longitud, VigenciaDesde, VigenciaHasta, Estado)) ~\u003e DestinoSilver",
-                                                                  "Clasificar@Observados derive(Motivo = iif(isNull(nDesde) || isNull(nHasta), \u0027FECHA_INVALIDA\u0027, iif(year(nDesde) \u003e nAnio || year(nHasta) \u003c nAnio || nDesde \u003e nHasta, \u0027FUERA_DE_VIGENCIA_O_INTERVALO_INVALIDO\u0027, \u0027CAMPO_REQUERIDO_TIPO_LONGITUD_O_RANGO_INVALIDO\u0027))) ~\u003e ExplicarObservacion",
-                                                                  "ExplicarObservacion select(mapColumn(AnioFuente,",
-                                                                  "    ParadaHistoricaId,",
-                                                                  "    CodigoPublicado,",
-                                                                  "    NombreParada,",
-                                                                  "    Zona,",
-                                                                  "    Latitud,",
-                                                                  "    Longitud,",
-                                                                  "    VigenciaDesde,",
-                                                                  "    VigenciaHasta,",
-                                                                  "    Estado,",
-                                                                  "    Motivo),",
-                                                                  "    skipDuplicateMapInputs: false, skipDuplicateMapOutputs: true) ~\u003e ColumnasObservadas",
-                                                                  "ColumnasObservadas sink(input(AnioFuente as string, ParadaHistoricaId as string, CodigoPublicado as string, NombreParada as string, Zona as string, Latitud as string, Longitud as string, VigenciaDesde as string, VigenciaHasta as string, Estado as string, Motivo as string),",
-                                                                  "    allowSchemaDrift: true, validateSchema: false,",
-                                                                  "    deletable: false, insertable: true, updateable: false, upsertable: false,",
-                                                                  "    format: \u0027table\u0027, skipDuplicateMapInputs: true, skipDuplicateMapOutputs: true,",
-                                                                  "    errorHandlingOption: \u0027stopOnFirstError\u0027,",
-                                                                  "    mapColumn(AnioFuente, ParadaHistoricaId, CodigoPublicado, NombreParada, Zona, Latitud, Longitud, VigenciaDesde, VigenciaHasta, Estado, Motivo)) ~\u003e DestinoObservados"
-                                                              ]
-                                          }
-                   },
-    "name":  "df_silver_paradas_9887212"
+	"name": "df_silver_paradas_9887212",
+	"properties": {
+		"description": "Silver: convierte fechas ISO, dd/MM/yyyy y seriales Excel, normaliza, valida, separa observados y elimina solo duplicados exactos. Expande el catalogo CSV 2020-2021 por anio y conserva vigencias. Para archivos sin ID historico: codigo@yyyyMMdd; mantiene separadas las dos ubicaciones de MC-01 de 2023. IDs del ERP conservados.",
+		"folder": {
+			"name": "silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "bronze_paradas_dw",
+						"type": "DatasetReference"
+					},
+					"name": "OrigenBronze"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dw_silver_paradas_sql",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoSilver"
+				},
+				{
+					"dataset": {
+						"referenceName": "observados_paradas_dw",
+						"type": "DatasetReference"
+					},
+					"name": "DestinoObservados"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Normalizar"
+				},
+				{
+					"name": "Identificar"
+				},
+				{
+					"name": "Validar"
+				},
+				{
+					"name": "Clasificar"
+				},
+				{
+					"name": "ColumnasSilver"
+				},
+				{
+					"name": "QuitarDuplicadosExactos"
+				},
+				{
+					"name": "ExplicarObservacion"
+				},
+				{
+					"name": "ColumnasObservadas"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AnioFuente as string,",
+				"          ParadaHistoricaId as string,",
+				"          CodigoPublicado as string,",
+				"          NombreParada as string,",
+				"          Zona as string,",
+				"          Latitud as string,",
+				"          Longitud as string,",
+				"          VigenciaDesde as string,",
+				"          VigenciaHasta as string,",
+				"          Estado as string",
+				"     ),",
+				"     allowSchemaDrift: false,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_COMMITTED',",
+				"     query: 'SELECT CONVERT(varchar(10), 2020) AS AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT CONVERT(varchar(10), 2021) AS AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE AnioFuente = \\'2020-2021\\' UNION ALL SELECT AnioFuente, [ParadaHistoricaId], [CodigoPublicado], [NombreParada], [Zona], [Latitud], [Longitud], [VigenciaDesde], [VigenciaHasta], [Estado] FROM bronze.ParadasAzure WHERE (AnioFuente <> \\'2020-2021\\' OR AnioFuente IS NULL)',",
+				"     format: 'query') ~> OrigenBronze",
+				"OrigenBronze derive(nAnio = toInteger(trim(AnioFuente)),",
+				"          nDesde = coalesce(toDate(substring(trim(VigenciaDesde), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaDesde), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaDesde)))),",
+				"          nHasta = coalesce(toDate(substring(trim(VigenciaHasta), 1, 10), 'yyyy-MM-dd'), toDate(trim(VigenciaHasta), 'dd/MM/yyyy'), addDays(toDate('1899-12-30'), toInteger(toDouble(VigenciaHasta)))),",
+				"          nEstado = upper(trim(Estado)),",
+				"          nCodigo = upper(trim(CodigoPublicado)),",
+				"          nNombre = trim(NombreParada),",
+				"          nZona = trim(Zona),",
+				"          nLatitud = toDecimal(replace(trim(Latitud), ',', '.'), 9, 6),",
+				"          nLongitud = toDecimal(replace(trim(Longitud), ',', '.'), 9, 6)) ~> Normalizar",
+				"Normalizar derive(nId = iif(nAnio <= 2023, concat(nCodigo, '@', toString(nDesde, 'yyyyMMdd')), upper(trim(ParadaHistoricaId)))) ~> Identificar",
+				"Identificar derive(nValido = coalesce(!isNull(nLatitud) && !isNull(nLongitud) && nLatitud >= -90 && nLatitud <= 90 && nLongitud >= -180 && nLongitud <= 180 && !isNull(nAnio) && nAnio >= 2020 && nAnio <= 2025 && !isNull(nDesde) && !isNull(nHasta) && nDesde <= nHasta && year(nDesde) <= nAnio && year(nHasta) >= nAnio && !isNull(nId) && length(nId) > 0 && length(nId) <= 30 && !isNull(nCodigo) && length(nCodigo) > 0 && length(nCodigo) <= 20 && !isNull(nNombre) && length(nNombre) > 0 && length(nNombre) <= 120 && !isNull(nZona) && length(nZona) > 0 && length(nZona) <= 40 && !isNull(nEstado) && length(nEstado) > 0 && length(nEstado) <= 20, false())) ~> Validar",
+				"Validar split(nValido,",
+				"     disjoint: false) ~> Clasificar@(Validos, Observados)",
+				"Clasificar@Validos select(mapColumn(",
+				"          AnioFuente = nAnio,",
+				"          ParadaHistoricaId = nId,",
+				"          CodigoPublicado = nCodigo,",
+				"          NombreParada = nNombre,",
+				"          Zona = nZona,",
+				"          Latitud = nLatitud,",
+				"          Longitud = nLongitud,",
+				"          VigenciaDesde = nDesde,",
+				"          VigenciaHasta = nHasta,",
+				"          Estado = nEstado",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: true) ~> ColumnasSilver",
+				"ColumnasSilver aggregate(groupBy(AnioFuente,",
+				"          ParadaHistoricaId,",
+				"          CodigoPublicado,",
+				"          NombreParada,",
+				"          Zona,",
+				"          Latitud,",
+				"          Longitud,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado),",
+				"     Repeticiones = count()) ~> QuitarDuplicadosExactos",
+				"Clasificar@Observados derive(Motivo = iif(isNull(nDesde) || isNull(nHasta), 'FECHA_INVALIDA', iif(year(nDesde) > nAnio || year(nHasta) < nAnio || nDesde > nHasta, 'FUERA_DE_VIGENCIA_O_INTERVALO_INVALIDO', 'CAMPO_REQUERIDO_TIPO_LONGITUD_O_RANGO_INVALIDO'))) ~> ExplicarObservacion",
+				"ExplicarObservacion select(mapColumn(",
+				"          AnioFuente,",
+				"          ParadaHistoricaId,",
+				"          CodigoPublicado,",
+				"          NombreParada,",
+				"          Zona,",
+				"          Latitud,",
+				"          Longitud,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado,",
+				"          Motivo",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: true) ~> ColumnasObservadas",
+				"QuitarDuplicadosExactos sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AnioFuente as integer,",
+				"          ParadaHistoricaId as string,",
+				"          CodigoPublicado as string,",
+				"          NombreParada as string,",
+				"          Zona as string,",
+				"          Latitud as decimal(9,6),",
+				"          Longitud as decimal(9,6),",
+				"          VigenciaDesde as date,",
+				"          VigenciaHasta as date,",
+				"          Estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          AnioFuente,",
+				"          ParadaHistoricaId,",
+				"          CodigoPublicado,",
+				"          NombreParada,",
+				"          Zona,",
+				"          Latitud,",
+				"          Longitud,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado",
+				"     )) ~> DestinoSilver",
+				"ColumnasObservadas sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AnioFuente as string,",
+				"          ParadaHistoricaId as string,",
+				"          CodigoPublicado as string,",
+				"          NombreParada as string,",
+				"          Zona as string,",
+				"          Latitud as string,",
+				"          Longitud as string,",
+				"          VigenciaDesde as string,",
+				"          VigenciaHasta as string,",
+				"          Estado as string,",
+				"          Motivo as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          AnioFuente,",
+				"          ParadaHistoricaId,",
+				"          CodigoPublicado,",
+				"          NombreParada,",
+				"          Zona,",
+				"          Latitud,",
+				"          Longitud,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado,",
+				"          Motivo",
+				"     )) ~> DestinoObservados"
+			]
+		}
+	}
 }
