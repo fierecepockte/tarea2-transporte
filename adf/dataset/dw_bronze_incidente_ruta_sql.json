@@ -1,5 +1,5 @@
 {
-	"name": "dw_incidente_ruta_sql",
+	"name": "dw_bronze_incidente_ruta_sql",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "sql_dw_transporte",

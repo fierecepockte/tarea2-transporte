@@ -18,7 +18,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "dw_incidente_ruta_sql",
+						"referenceName": "dw_bronze_incidente_ruta_sql",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
